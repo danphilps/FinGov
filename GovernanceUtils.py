@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns #charts
 
+from imblearn.over_sampling import SMOTE
+
 from sklearn.ensemble import VotingClassifier
 from sklearn.preprocessing import StandardScaler
 
