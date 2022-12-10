@@ -1,3 +1,11 @@
+# package for working with tabular data
+import pandas as pd 
+import numpy as np
+
+# Package for charting
+import matplotlib.pyplot as plt
+import seaborn as sns #charts
+
 from sklearn.metrics import f1_score
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import precision_score
