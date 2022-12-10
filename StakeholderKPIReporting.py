@@ -6,6 +6,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns #charts
 
+# package for working with tabular data
+import pandas as pd 
+import numpy as np
+
+# Package for charting
+import matplotlib.pyplot as plt
+import seaborn as sns #charts
+
 import sklearn.metrics as metrics
 
 # Performance metrics...
