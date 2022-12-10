@@ -149,6 +149,70 @@ class GovernanceUtils():
 
       return max_mdl, all_mdls, all_mdls_desc, all_mdls_perf
 
+  # Check to run on Challenger and live models that encapsulates key KPIs
+  def challenger_review_live(live_mod: object,
+                            challenger_mod: object,
+                            X_test: pd.DataFrame,
+                            y_test: pd.DataFrame,
+                            precision_fault_threshold: float = 0.1,
+                            accuracy_fault_threshold: float = 0.1) -> str:
+    '''
+    Args:
+      live_mod: live model, trained and ready to go.
+      challenger_mod: challenger model to compare to live, trained and ready to go.
+      X_test: Test data matching above shape
+      y_test: test data target variable {1,0}, instances are rows.
+      precision_fault_threshold: if challenger is > this must better than live, throw an exception
+      accuracy_fault_threshold: if challenger is > this must better than live, throw an exception
+        
+    Returns:
+        err: error message
+        
+    Author:
+        Dan Philps
+    '''
+
+    # Run models and compare
+    y_hat_live = live_mod.predict(X_test)
+    y_hat_challenger = challenger_mod.predict(X_test)
+
+    # Compare the precsision of live and challenger
+    live_ac, live_prec = StakeholderKPIReporting.kpi_review_customer_business_compliance(live_mod, X_test, y_test, y_hat_live)
+    challenger_ac, challenger_prec = StakeholderKPIReporting.kpi_review_customer_business_compliance(challenger_mod, X_test, y_test, y_hat_challenger)
+
+    # Simple test
+    err = ''
+    if (challenger_prec - live_prec > precision_fault_threshold):
+        err = 'Precision fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.'
+        print('Precision fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.')
+
+    if (live_prec - live_ac > accuracy_fault_threshold):
+        err = 'Precision fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.'
+        print('Accuracy fault threshold breached! Challenger model achieving materially better accuracy than live - consider retraining live models.')
+    
+    # Bar chart of prec and recall
+    plt.bar(['live_prec', 'challenger_prec'], [live_prec, challenger_prec], color = 'b')
+    plt.bar(['live_ac', 'challenger_ac'], [live_ac, challenger_ac], color = 'r')
+    plt.title=('Bar chart of Precision and Accuracy')
+    plt.show()
+
+    # ROC Curve
+    y_hat_prob_live = live_mod.predict_proba(X_test)[:, 1]
+    y_hat_prob_challenger = challenger_mod.predict_proba(X_test)[:, 1]
+
+    plt.title = "Credit Decisions ROC Curve"
+    
+    fpr, tpr, _ = metrics.roc_curve(y_test, y_hat_prob_live)
+    plt.plot(fpr,tpr,label='Live model')
+
+    fpr, tpr, _ = metrics.roc_curve(y_test, y_hat_prob_challenger)
+    plt.plot(fpr,tpr,label='Challenger model')
+
+    plt.legend(['Live', 'Challenger'])
+    plt.title = 'ROC Curves: Live vs Challenger'
+    plt.show()
+
+    return err
 
   # Create a challenger model
   # requires a list of ready trained models (all_mdls) and corresponding descrtiptions 
@@ -246,8 +310,8 @@ class GovernanceUtils():
   # change.
   #https://www.quora.com/What-is-population-stability-index
   @staticmethod
-  def data_drift_psi(X_train: np.array,                  
-                  X: np.array, 
+  def data_drift_psi(X_train: pd.DataFrame,                  
+                  X:  pd.DataFrame, 
                   buckettype: str='bins', 
                   buckets: int =10, 
                   axis: int =0, 
@@ -272,14 +336,12 @@ class GovernanceUtils():
        github.com/mwburke
        worksofchart.com
     '''
-
     # sanity
     if single_variable == False:
         if X_train.shape[1] != X.shape[1]:
           raise TypeError('X_train.shape != X.shape')
 
-    # Ini data
-    columns_features = X_test.columns.array
+    # Ini data   
     ar_X_train = X_train.to_numpy()
     ar_X = X.to_numpy()
 
@@ -318,7 +380,6 @@ class GovernanceUtils():
         expected_percents = np.histogram(expected_array, breakpoints)[0] / len(expected_array)
         actual_percents = np.histogram(actual_array, breakpoints)[0] / len(actual_array)
     
-
         def sub_psi(e_perc: float, 
                     a_perc: float) -> float:
             '''Calculate the actual PSI value from comparing the values.
@@ -358,6 +419,7 @@ class GovernanceUtils():
       print("The feature CSI values are:")
       i = 0
       for col in columns_features:
+
           if psi_values[i] > 0.2:
                   print(col, "*************** CSI value is over 0.2 = ",psi_values[i])
           elif psi_values[i] > 0.1:
@@ -434,4 +496,3 @@ class GovernanceUtils():
       ks_relative_percent_change = (ks_current.statistic - ks_baseline.statistic)/ks_baseline.statistic
 
       return ks_relative_percent_change
-  
