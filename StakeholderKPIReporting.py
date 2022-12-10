@@ -67,12 +67,12 @@ class StakeholderKPIReporting():
       '''
 
     #sanity
-    if X.shape[0] != y_test.shape[0]:
-      raise TypeError('Bad parameter: X.shape[0] != y_test.shape[0]')
+    if X.shape[0] != y.shape[0]:
+      raise TypeError('Bad parameter: X.shape[0] != y.shape[0]')
     if y.shape[0] != y_hat.shape[0]:
-      raise TypeError('Bad parameter: y_test.shape[0] != y_test_hat.shape[0]')
+      raise TypeError('Bad parameter: y_test.shape[0] != y_hat.shape[0]')
     if (y.dtype != y_hat.dtype):
-      raise TypeError('Bad parameter: y_test.dtypes != y_test_hat.dtypes')
+      raise TypeError('Bad parameter: y_test.dtypes != y_hat.dtypes')
 
     # F1, precision, recall...  
     prec = precision_score(y_true=y[:], y_pred=y_hat[:])
