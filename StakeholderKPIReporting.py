@@ -121,7 +121,7 @@ class StakeholderKPIReporting():
       shap_values = explainer(X_test.values)
     elif type(max_mdl).__name__ == 'GradientBoostingClassifier':
       explainer = shap.Explainer(max_mdl.predict, X_test.values)
-      shap_values = explainer(X_test.values)import sklearn.metrics as metrics
+      shap_values = explainer(X_test.values)
 
 # Performance metrics...
 from sklearn.metrics import f1_score
