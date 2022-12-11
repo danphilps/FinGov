@@ -5,6 +5,7 @@ import numpy as np
 # Package for charting
 import matplotlib.pyplot as plt
 import seaborn as sns #charts
+import shap
 
 # package for working with tabular data
 import pandas as pd 
