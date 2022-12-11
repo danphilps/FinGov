@@ -412,7 +412,7 @@ class FairnessUtils():
         ax[i].set_ylabel('%')
         ax[i].set_xticklabels(X_val, rotation = 45, ha="right")
         ax[i].legend(loc='lower center')
-        ax[i].title.set_text = ametric
+        ax[i].title.set_text(ametric)
         ax[i].bar(X_val, Y_val, width, label=ametric, color=cmap(i))
 
         i += 1
