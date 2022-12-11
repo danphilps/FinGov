@@ -127,7 +127,7 @@ class StakeholderKPIReporting():
         idx_bool[idx] = True
 
         # Reduced set to run shap on
-        X_test_reduced = X_test.loc[idx_bool]
+        X_test = X_test.loc[idx_bool].copy(deep=True)
         X_test_protected_reduced = X_test_protected.loc[idx_bool]
 
     # Instantiate an explainer object for our chosen classifier...
@@ -159,4 +159,4 @@ class StakeholderKPIReporting():
     elif type(max_mdl).__name__ == 'GradientBoostingClassifier':
       explainer = shap.Explainer(max_mdl.predict, X_test.values)
       
-    return shap_values, explainer, X_test_reduced, X_test_protected_reduced
+    return shap_values, explainer, X_test, X_test_protected_reduced
