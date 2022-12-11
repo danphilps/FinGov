@@ -170,7 +170,7 @@ class GovernanceUtils():
                             X_test: pd.DataFrame,
                             y_test: pd.DataFrame,
                             precision_fault_threshold: float = 0.1,
-                            accuracy_fault_threshold: float = 0.1) -> str:
+                            recall_fault_threshold: float = 0.1) -> str:
     '''
     Args:
       live_mod: live model, trained and ready to go.
@@ -178,7 +178,7 @@ class GovernanceUtils():
       X_test: Test data matching above shape
       y_test: test data target variable {1,0}, instances are rows.
       precision_fault_threshold: if challenger is > this must better than live, throw an exception
-      accuracy_fault_threshold: if challenger is > this must better than live, throw an exception
+      recall_fault_threshold: if challenger is > this must better than live, throw an exception
         
     Returns:
         err: error message
@@ -192,8 +192,8 @@ class GovernanceUtils():
     y_hat_challenger = challenger_mod.predict(X_test)
 
     # Compare the precsision of live and challenger
-    live_ac, live_prec = StakeholderKPIReporting.kpi_review_customer_business_compliance(live_mod, X_test, y_test, y_hat_live)
-    challenger_ac, challenger_prec = StakeholderKPIReporting.kpi_review_customer_business_compliance(challenger_mod, X_test, y_test, y_hat_challenger)
+    live_recall, live_prec = StakeholderKPIReporting.kpi_review_customer_business_compliance(live_mod, X_test, y_test, y_hat_live)
+    challenger_recall, challenger_prec = StakeholderKPIReporting.kpi_review_customer_business_compliance(challenger_mod, X_test, y_test, y_hat_challenger)
 
     # Simple test
     err = ''
@@ -201,13 +201,13 @@ class GovernanceUtils():
         err = 'Precision fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.'
         print('Precision fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.')
 
-    if (live_prec - live_ac > accuracy_fault_threshold):
-        err = 'Precision fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.'
-        print('Accuracy fault threshold breached! Challenger model achieving materially better accuracy than live - consider retraining live models.')
+    if (challenger_recall - live_recall > recall_fault_threshold):
+        err = 'Recall fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.'
+        print('Recall fault threshold breached! Challenger model achieving materially better accuracy than live - consider retraining live models.')
     
     # Bar chart of prec and recall
     plt.bar(['live_prec', 'challenger_prec'], [live_prec, challenger_prec], color = 'b')
-    plt.bar(['live_ac', 'challenger_ac'], [live_ac, challenger_ac], color = 'r')
+    plt.bar(['live_recall', 'challenger_recall'], [live_ac, challenger_ac], color = 'r')
     plt.title=('Bar chart of Precision and Accuracy')
     plt.show()
 
