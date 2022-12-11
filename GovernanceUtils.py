@@ -428,6 +428,7 @@ class GovernanceUtils():
     # Print out the features CSI values
     if show_results == True:
       print("The feature CSI values are:")
+      columns_features = train_datadrift.columns
       i = 0
       for col in columns_features:
 
