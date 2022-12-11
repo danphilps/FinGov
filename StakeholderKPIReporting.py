@@ -158,5 +158,6 @@ class StakeholderKPIReporting():
       shap_values = explainer(X_test.values)
     elif type(max_mdl).__name__ == 'GradientBoostingClassifier':
       explainer = shap.Explainer(max_mdl.predict, X_test.values)
+      shap_values = explainer(X_test.values)
       
     return shap_values, explainer, X_test, X_test_protected_reduced
