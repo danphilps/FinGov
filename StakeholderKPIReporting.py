@@ -116,18 +116,19 @@ class StakeholderKPIReporting():
       raise TypeError('X_test_protected.shape[0] != X_test.shape[0]')
       
     # Speed up...
-    if X_test.shape[0] > 50:
-      # create a list of randomly picked indices, one for each row
-      size_of_data = 50
-      # create a list of randomly picked indices, one for each row
-      idx_bool = np.full((X_test.shape[0]), False)
-      idx = np.random.randint(size_of_data, size=X_test.shape[0])
-      # replace "False" by "True" at given indices
-      idx_bool[idx] = True
+    if speed_up:
+      if X_test.shape[0] > 50:
+        # create a list of randomly picked indices, one for each row
+        size_of_data = 25
+        # create a list of randomly picked indices, one for each row
+        idx_bool = np.full((X_test.shape[0]), False)
+        idx = np.random.randint(size_of_data, size=X_test.shape[0])
+        # replace "False" by "True" at given indices
+        idx_bool[idx] = True
 
-      # Reduced set to run shap on
-      X_test_reduced = X_test.loc[idx_bool]
-      X_test_protected_reduced = X_test_protected.loc[idx_bool]
+        # Reduced set to run shap on
+        X_test_reduced = X_test.loc[idx_bool]
+        X_test_protected_reduced = X_test_protected.loc[idx_bool]
 
     # Instantiate an explainer object for our chosen classifier...
     if type(max_mdl).__name__ == 'DecisionTreeClassifier':
