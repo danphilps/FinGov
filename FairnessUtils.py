@@ -235,7 +235,7 @@ class FairnessUtils():
                 high_threshold = a_threshold
 
     if high_maximization_metric > 0:
-        df_stats = FairnessUtils.fairness_stats_get (mod, X_test, y_test, X_test_gender, high_threshold/100)
+        df_stats = FairnessUtils.fairness_stats_get (mod, X_test, y_test, X_test_category_col, high_threshold/100)
         FairnessUtils.plot_fairness_charts(df_stats, majority_class, fairness_metric, threshold_metric)
         opt_threshold = high_threshold/100
     else:
