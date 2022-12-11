@@ -111,8 +111,6 @@ class StakeholderKPIReporting():
     #sanity
     if max_mdl is None:
       raise TypeError('max_mdl is None')
-    if X_test_protected.shape[0] != X_test.shape[0]:
-      raise TypeError('X_test_protected.shape[0] != X_test.shape[0]')
       
     # Speed up...
     if speed_up:
@@ -127,7 +125,6 @@ class StakeholderKPIReporting():
 
         # Reduced set to run shap on
         X_test_reduced = X_test.loc[idx_bool]
-        X_test_protected_reduced = X_test_protected.loc[idx_bool]
 
     # Instantiate an explainer object for our chosen classifier...
     if type(max_mdl).__name__ == 'DecisionTreeClassifier':
