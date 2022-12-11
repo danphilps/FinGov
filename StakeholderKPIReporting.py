@@ -107,7 +107,7 @@ class StakeholderKPIReporting():
   @staticmethod
   def classifier_shap_vals(max_mdl: object,
                             X_test: pd.DataFrame,
-                            X_test: pd.DataFrame,
+                            X_test_protected: pd.DataFrame,
                             speed_up: bool = True) -> np.array:
    #sanity
     if max_mdl is None:
