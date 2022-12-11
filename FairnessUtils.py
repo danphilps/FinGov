@@ -474,7 +474,7 @@ class FairnessUtils():
         opt_threshold = np.nan
     
     # Print the optimal threshold....
-    print('Optimal threshold: ' + str(optimal_threshold))
+    print('Optimal threshold: ' + str(opt_threshold))
 
     return opt_threshold
 
