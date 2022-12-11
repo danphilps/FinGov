@@ -25,6 +25,8 @@ from sklearn.svm import SVC, LinearSVC, NuSVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.metrics import confusion_matrix
 
+import sklearn.metrics as metrics
+
 # Performance metrics...
 from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
