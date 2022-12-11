@@ -1,4 +1,4 @@
-import StakeholderKPIReporting
+from StakeholderKPIReporting import StakeholderKPIReporting
 
 # package for working with tabular data
 import pandas as pd 
