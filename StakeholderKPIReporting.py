@@ -107,24 +107,27 @@ class StakeholderKPIReporting():
   @staticmethod
   def classifier_shap_vals(max_mdl: object,
                             X_test: pd.DataFrame,
+                            X_test: pd.DataFrame,
                             speed_up: bool = True) -> np.array:
-    #sanity
+   #sanity
     if max_mdl is None:
       raise TypeError('max_mdl is None')
+    if X_test_protected.shape[0] != X_test.shape[0]:
+      raise TypeError('X_test_protected.shape[0] != X_test.shape[0]')
       
     # Speed up...
-    if speed_up:
-      if X_test.shape[0] > 50:
-        # create a list of randomly picked indices, one for each row
-        size_of_data = 50
-        # create a list of randomly picked indices, one for each row
-        idx_bool = np.full((X_test.shape[0]), False)
-        idx = np.random.randint(size_of_data, size=X_test.shape[0])
-        # replace "False" by "True" at given indices
-        idx_bool[idx] = True
+    if X_test.shape[0] > 50:
+      # create a list of randomly picked indices, one for each row
+      size_of_data = 50
+      # create a list of randomly picked indices, one for each row
+      idx_bool = np.full((X_test.shape[0]), False)
+      idx = np.random.randint(size_of_data, size=X_test.shape[0])
+      # replace "False" by "True" at given indices
+      idx_bool[idx] = True
 
-        # Reduced set to run shap on
-        X_test_reduced = X_test.loc[idx_bool]
+      # Reduced set to run shap on
+      X_test_reduced = X_test.loc[idx_bool]
+      X_test_protected_reduced = X_test_protected.loc[idx_bool]
 
     # Instantiate an explainer object for our chosen classifier...
     if type(max_mdl).__name__ == 'DecisionTreeClassifier':
@@ -154,3 +157,5 @@ class StakeholderKPIReporting():
       shap_values = explainer(X_test.values)
     elif type(max_mdl).__name__ == 'GradientBoostingClassifier':
       explainer = shap.Explainer(max_mdl.predict, X_test.values)
+      
+    return shap_values, explainer, X_test_reduced, X_test_protected_reduced
