@@ -41,3 +41,6 @@ Model deployment involes multiple stages of testing and authorization. We propos
 During live running of the models, monitoring of data drift is essential, and for additional safety a challenger model can be run in parallel to the live model, to ensure the live model is functioning well with respect to stakeholder KPIs.
 
 >> GovernanceUtils contains challenger model, fit and predict functions to compare live model performance; data drift functions to ensure the distributions of the input data are similar to the training data.
+
+## Acknolwedgements
+Thanks to Jim Landi of the CFAI, Peter Simon of Data Robot.
