@@ -76,12 +76,18 @@ class GovernanceUtils():
       # Generate SMOTE samples and use this to train
       upsampler_smote = SMOTE()
       X_upsampled_smote, y_upsampled_smote = upsampler_smote.fit_resample(X_train.values, y_train.values)
-
+      
+      X_train_cols = X_train.columns #retain cols so we can meaninglfully use XAI
+      
       sclr = StandardScaler()
       sclr.fit(X_train.values) # scale to 0 mean and std dev 1 on training data
 
       X_train = sclr.fit_transform(X_upsampled_smote) # scale both sets:
       X_cross_validation = sclr.fit_transform(X_cross_validation)
+      
+      # reinstate cols so we can meaninglfully use XAI
+      X_train = pd.DataFrame(X_train)
+      X_train.columns = X_train_cols
       
       # These are the classifiers we will select from...
       dtc = DecisionTreeClassifier(max_depth=5) #If we allow endless depth we overfit
