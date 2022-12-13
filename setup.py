@@ -20,16 +20,6 @@ AUTHOR = 'Dan Philps, Madhu Nagarajan, Augusting Backer'
 REQUIRES_PYTHON = '>=3.6.0'
 VERSION = '0.1.0'
 
-# What packages are required for this module to be executed?
-REQUIRED = [
-    # 'os', 'numpy', 'shap', 'pandas', 'matplotlib.pyplot', 'sklearn'
-]
-
-# What packages are optional?
-EXTRAS = {
-    # 'fancy feature': ['django'],
-}
-
 # Where the magic happens:
 setup(
     name=NAME,
