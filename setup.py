@@ -103,7 +103,7 @@ setup(
     author_email=EMAIL,
     python_requires=REQUIRES_PYTHON,
     url=URL,
-    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
+    packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"], include=['GovernanceUtils','FairnessUtils','StakeholderKPIReporting']),
     # If your package is a single module, use this instead of 'packages':
     py_modules=['GovernanceUtils.py'], #, 'FairnessUtils.py', 'StakeholderKPIReporting.py'],
 
