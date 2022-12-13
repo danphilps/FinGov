@@ -13,7 +13,7 @@ setup(
     description="A package to convert your Jupyter Notebook",
     long_description=readme,
     long_description_content_type="text/markdown",
-    url="https://github.com/your_package/homepage/",
+    url="https://github.com/danphilps/FinGov",
     packages=find_packages('GovernanceUtils'),
     install_requires=requirements,
     classifiers=[
