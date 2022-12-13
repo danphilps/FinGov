@@ -77,18 +77,20 @@ class StakeholderKPIReporting():
     if (y.dtype != y_hat.dtype):
       raise TypeError('Bad parameter: y_test.dtypes != y_hat.dtypes')
 
-    # F1, precision, recall...  
-    prec = precision_score(y_true=y[:], y_pred=y_hat[:])
-    rec = recall_score(y_true=y[:], y_pred=y_hat[:])
-    f1 = f1_score(y_true=y[:], y_pred=y_hat[:])
+    with warnings.catch_warnings():
+      warnings.simplefilter("ignore")
+      # F1, precision, recall...  
+      prec = precision_score(y_true=y[:], y_pred=y_hat[:])
+      rec = recall_score(y_true=y[:], y_pred=y_hat[:])
+      f1 = f1_score(y_true=y[:], y_pred=y_hat[:])
 
-    print(prec)
+      print(prec)
 
-    # ROC Curve
-    metrics.plot_roc_curve(mdl, X, y) 
-    fpr, tpr, thresholds = metrics.roc_curve(y, y_hat)
-    plt.title ='Credit Decisions ROC Curve'
-    plt.show()
+      # ROC Curve
+      metrics.plot_roc_curve(mdl, X, y) 
+      fpr, tpr, thresholds = metrics.roc_curve(y, y_hat)
+      plt.title ='Credit Decisions ROC Curve'
+      plt.show()
     return f1, prec, rec
   
   @staticmethod
