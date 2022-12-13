@@ -1,23 +1,25 @@
-# Package meta-data.
-NAME = 'FinGov'
-DESCRIPTION = 'Utilities for model Governance and Fairness in Finance'
-URL = 'https://github.com/danphilps/FinGov.git'
-EMAIL = 'danphilps@hotmail.com'
-AUTHOR = 'Dan Philps, Madhu Nagarajan, Augusting Backer'
-REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1.0'
+from setuptools import setup, find_packages
 
-# Where the magic happens:
+with open("README.md", "r") as readme_file:
+    readme = readme_file.read()
+
+requirements = ["ipython>=6", "nbformat>=4", "nbconvert>=5", "requests>=2"]
+
 setup(
-    name=NAME,
-    version=VERSION,
-    packages=find_packages(include=['GovernanceUtils.*', 'GovernanceUtils']),
-    install_requires=[
-        'PyYAML',
-        'pandas==0.23.3',
-        'numpy>=1.14.5',
-        'matplotlib>=2.2.0,,
-        'jupyter',
-        'colab'
-    ]
+    name="FinGov",
+    version="0.0.1",
+    author='Dan Philps, Madhu Nagarajan, Augusting Backer',
+    author_email="danphilps@hotmail.com",
+    description="A package to convert your Jupyter Notebook",
+    long_description=readme,
+    long_description_content_type="text/markdown",
+    url="https://github.com/your_package/homepage/",
+    packages=find_packages(),
+    install_requires=requirements,
+    classifiers=[
+        "Programming Language :: Python :: 3.7",
+        "colab",
+        "jupyter",
+        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+    ],
 )
