@@ -72,97 +72,99 @@ class GovernanceUtils():
       if selection_criteria not in ['precision','recall','accuracy','f1']:
         raise TypeError("selection_criteria not in ['precision','recall','accuracy','f1']")
 
-      #Balance training data....
-      # Generate SMOTE samples and use this to train
-      upsampler_smote = SMOTE()
-      X_upsampled_smote, y_upsampled_smote = upsampler_smote.fit_resample(X_train.values, y_train.values)
-      
-      X_train_cols = X_train.columns #retain cols so we can meaninglfully use XAI
-      
-      sclr = StandardScaler()
-      sclr.fit(X_train.values) # scale to 0 mean and std dev 1 on training data
+      with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        #Balance training data....
+        # Generate SMOTE samples and use this to train
+        upsampler_smote = SMOTE()
+        X_upsampled_smote, y_upsampled_smote = upsampler_smote.fit_resample(X_train.values, y_train.values)
 
-      X_train = sclr.fit_transform(X_upsampled_smote) # scale both sets:
-      X_cross_validation = sclr.fit_transform(X_cross_validation)
-      
-      # reinstate cols so we can meaninglfully use XAI
-      X_train = pd.DataFrame(X_train)
-      X_train.columns = X_train_cols
-      
-      # These are the classifiers we will select from...
-      dtc = DecisionTreeClassifier(max_depth=5) #If we allow endless depth we overfit
-      gnb = GaussianNB()
-      lr = LogisticRegression(max_iter=2000,random_state=0)
-      mlp = MLPClassifier(max_iter=2000,random_state=1, early_stopping=True) # MLP will tend to overfit unless we stop early   
-      rf = RandomForestClassifier(max_depth=3,random_state=0) # << artibitrary parameters, consider hyper parameter tuning.
-      lda = LinearDiscriminantAnalysis()
-      qda = QuadraticDiscriminantAnalysis()
-      ada = AdaBoostClassifier()
-      gbc = GradientBoostingClassifier()
-      knn = KNeighborsClassifier(n_neighbors=3) # << artibitrary parameters, consider hyper parameter tuning.
-      svc = SVC(kernel="rbf", C=0.025, probability=True) # << artibitrary parameters, consider hyper parameter tuning.
-      nsvc = NuSVC(probability=True)
-      
-      all_mdls = [dtc, gnb, lr, mlp, rf, lda, qda, ada, gbc, knn, svc, nsvc]
-      all_mdls_desc = ['dtc', 'gnb', 'lr', 'mlp', 'rf', 'lda', 'qda', 'ada', 'gbc', 'knn', 'svc', 'nsvc']
-      all_mdls_perf = []
-      
-      # Loop through each classifer and record the "best"...
-      max_perf = 0
-      for mdl in all_mdls:
-          #Fit model
-          mdl.fit(X_upsampled_smote,y_upsampled_smote)  
-          y_train_hat = mdl.predict(X_upsampled_smote)
-          y_cross_validation_hat = mdl.predict(X_cross_validation)       
-          
-          # Output model selection information....Analytics calculated wrt default or y=1... Print score
-          print(mdl)
-          print(f"Precision train: {precision_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+        X_train_cols = X_train.columns #retain cols so we can meaninglfully use XAI
+
+        sclr = StandardScaler()
+        sclr.fit(X_train.values) # scale to 0 mean and std dev 1 on training data
+
+        X_train = sclr.fit_transform(X_upsampled_smote) # scale both sets:
+        X_cross_validation = sclr.fit_transform(X_cross_validation)
+
+        # reinstate cols so we can meaninglfully use XAI
+        X_train = pd.DataFrame(X_train)
+        X_train.columns = X_train_cols
+
+        # These are the classifiers we will select from...
+        dtc = DecisionTreeClassifier(max_depth=5) #If we allow endless depth we overfit
+        gnb = GaussianNB()
+        lr = LogisticRegression(max_iter=2000,random_state=0)
+        mlp = MLPClassifier(max_iter=2000,random_state=1, early_stopping=True) # MLP will tend to overfit unless we stop early   
+        rf = RandomForestClassifier(max_depth=3,random_state=0) # << artibitrary parameters, consider hyper parameter tuning.
+        lda = LinearDiscriminantAnalysis()
+        qda = QuadraticDiscriminantAnalysis()
+        ada = AdaBoostClassifier()
+        gbc = GradientBoostingClassifier()
+        knn = KNeighborsClassifier(n_neighbors=3) # << artibitrary parameters, consider hyper parameter tuning.
+        svc = SVC(kernel="rbf", C=0.025, probability=True) # << artibitrary parameters, consider hyper parameter tuning.
+        nsvc = NuSVC(probability=True)
+
+        all_mdls = [dtc, gnb, lr, mlp, rf, lda, qda, ada, gbc, knn, svc, nsvc]
+        all_mdls_desc = ['dtc', 'gnb', 'lr', 'mlp', 'rf', 'lda', 'qda', 'ada', 'gbc', 'knn', 'svc', 'nsvc']
+        all_mdls_perf = []
+
+        # Loop through each classifer and record the "best"...
+        max_perf = 0
+        for mdl in all_mdls:
+            #Fit model
+            mdl.fit(X_upsampled_smote,y_upsampled_smote)  
+            y_train_hat = mdl.predict(X_upsampled_smote)
+            y_cross_validation_hat = mdl.predict(X_cross_validation)       
+
+            # Output model selection information....Analytics calculated wrt default or y=1... Print score
+            print(mdl)
+            print(f"Precision train: {precision_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+            f"{precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
+
+            # Selection based on cross-validation set, ie out of sample data not used in training
+            if selection_criteria == 'precision':
+              this_cv_perf = precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
+            elif selection_criteria == 'recall':
+              this_cv_perf = recall_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
+            elif selection_criteria == 'accuracy':
+              this_cv_perf = mdl.score(X_cross_validation,y_cross_validation)
+            elif selection_criteria == 'f1':
+              this_cv_perf = f1_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
+
+            if this_cv_perf > max_perf:
+                max_perf = this_cv_perf
+                max_mdl = mdl
+
+            #Save the F1 score of this model...
+            all_mdls_perf.append(this_cv_perf)
+
+        # The best....
+        #Fit...
+        max_mdl.fit(X_upsampled_smote,y_upsampled_smote)
+        y_train_hat = max_mdl.predict(X_upsampled_smote)
+        y_cross_validation_hat = max_mdl.predict(X_cross_validation)
+
+        # Analytics calculated wrt default or y=1... Print score
+        print('\nWinner\n', type(max_mdl))        
+        print(f"Accuracy train: {max_mdl.score(X_train,y_upsampled_smote):.4f}, cross-validation: ",
+          f"{max_mdl.score(X_cross_validation,y_cross_validation):.4f}")
+        print(f"Precision train: {precision_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
           f"{precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
-    
-          # Selection based on cross-validation set, ie out of sample data not used in training
-          if selection_criteria == 'precision':
-            this_cv_perf = precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
-          elif selection_criteria == 'recall':
-            this_cv_perf = recall_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
-          elif selection_criteria == 'accuracy':
-            this_cv_perf = mdl.score(X_cross_validation,y_cross_validation)
-          elif selection_criteria == 'f1':
-            this_cv_perf = f1_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
+        print(f"Recall train: {recall_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+          f"{recall_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
+        print(f"F1 train: {f1_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+          f"{f1_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
 
-          if this_cv_perf > max_perf:
-              max_perf = this_cv_perf
-              max_mdl = mdl
-          
-          #Save the F1 score of this model...
-          all_mdls_perf.append(this_cv_perf)
+        #Print confusion matrix...
+        cf_matrix = confusion_matrix(y_cross_validation, y_cross_validation_hat, labels=[0, 1]) 
+        cf_matrix_norm = cf_matrix.astype('float')
 
-      # The best....
-      #Fit...
-      max_mdl.fit(X_upsampled_smote,y_upsampled_smote)
-      y_train_hat = max_mdl.predict(X_upsampled_smote)
-      y_cross_validation_hat = max_mdl.predict(X_cross_validation)
-      
-      # Analytics calculated wrt default or y=1... Print score
-      print('\nWinner\n', type(max_mdl))        
-      print(f"Accuracy train: {max_mdl.score(X_train,y_upsampled_smote):.4f}, cross-validation: ",
-        f"{max_mdl.score(X_cross_validation,y_cross_validation):.4f}")
-      print(f"Precision train: {precision_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
-        f"{precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
-      print(f"Recall train: {recall_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
-        f"{recall_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
-      print(f"F1 train: {f1_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
-        f"{f1_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
-          
-      #Print confusion matrix...
-      cf_matrix = confusion_matrix(y_cross_validation, y_cross_validation_hat, labels=[0, 1]) 
-      cf_matrix_norm = cf_matrix.astype('float')
-
-      ax = sns.heatmap(cf_matrix_norm, annot=True, cmap='Blues', fmt='g')
-      ax.set_title('Confusion Matrix\n\n');
-      ax.set_xlabel('\nPredicted Values')
-      ax.set_ylabel('Actual Values ');
-      plt.show()
+        ax = sns.heatmap(cf_matrix_norm, annot=True, cmap='Blues', fmt='g')
+        ax.set_title('Confusion Matrix\n\n');
+        ax.set_xlabel('\nPredicted Values')
+        ax.set_ylabel('Actual Values ');
+        plt.show()
       
       #sanity
       if max_mdl is None:
@@ -217,21 +219,23 @@ class GovernanceUtils():
     plt.title=('Bar chart of Precision and Accuracy')
     plt.show()
 
-    # ROC Curve
-    y_hat_prob_live = live_mod.predict_proba(X_test)[:, 1]
-    y_hat_prob_challenger = challenger_mod.predict_proba(X_test)[:, 1]
+    with warnings.catch_warnings():
+      warnings.simplefilter("ignore")
+      # ROC Curve
+      y_hat_prob_live = live_mod.predict_proba(X_test)[:, 1]
+      y_hat_prob_challenger = challenger_mod.predict_proba(X_test)[:, 1]
 
-    plt.title = "Credit Decisions ROC Curve"
-    
-    fpr, tpr, _ = metrics.roc_curve(y_test, y_hat_prob_live)
-    plt.plot(fpr,tpr,label='Live model')
+      plt.title = "Credit Decisions ROC Curve"
 
-    fpr, tpr, _ = metrics.roc_curve(y_test, y_hat_prob_challenger)
-    plt.plot(fpr,tpr,label='Challenger model')
+      fpr, tpr, _ = metrics.roc_curve(y_test, y_hat_prob_live)
+      plt.plot(fpr,tpr,label='Live model')
 
-    plt.legend(['Live', 'Challenger'])
-    plt.title = 'ROC Curves: Live vs Challenger'
-    plt.show()
+      fpr, tpr, _ = metrics.roc_curve(y_test, y_hat_prob_challenger)
+      plt.plot(fpr,tpr,label='Challenger model')
+
+      plt.legend(['Live', 'Challenger'])
+      plt.title = 'ROC Curves: Live vs Challenger'
+      plt.show()
 
     return err
 
