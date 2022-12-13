@@ -114,50 +114,53 @@ class StakeholderKPIReporting():
       raise TypeError('max_mdl is None')
     if X_test_protected.shape[0] != X_test.shape[0]:
       raise TypeError('X_test_protected.shape[0] != X_test.shape[0]')
-      
-    # Speed up...
-    if speed_up:
-      if X_test.shape[0] > 50:
-        # create a list of randomly picked indices, one for each row
-        size_of_data = 25
-        # create a list of randomly picked indices, one for each row
-        idx_bool = np.full((X_test.shape[0]), False)
-        idx = np.random.randint(size_of_data, size=X_test.shape[0])
-        # replace "False" by "True" at given indices
-        idx_bool[idx] = True
+    
+    #Ignore warnings...
+    with warnings.catch_warnings():
+      warnings.simplefilter("ignore")
+      # Speed up...
+      if speed_up:
+        if X_test.shape[0] > 50:
+          # create a list of randomly picked indices, one for each row
+          size_of_data = 25
+          # create a list of randomly picked indices, one for each row
+          idx_bool = np.full((X_test.shape[0]), False)
+          idx = np.random.randint(size_of_data, size=X_test.shape[0])
+          # replace "False" by "True" at given indices
+          idx_bool[idx] = True
 
-        # Reduced set to run shap on
-        X_test = X_test.loc[idx_bool].copy(deep=True)
-        X_test_protected_reduced = X_test_protected.loc[idx_bool]
+          # Reduced set to run shap on
+          X_test = X_test.loc[idx_bool].copy(deep=True)
+          X_test_protected_reduced = X_test_protected.loc[idx_bool]
 
-    # Instantiate an explainer object for our chosen classifier...
-    if type(max_mdl).__name__ == 'DecisionTreeClassifier':
-      explainer = shap.Explainer(max_mdl.predict, X_test.values)
-      shap_values = explainer(X_test.values)
-    elif type(max_mdl).__name__ == 'GaussianNB':
-      explainer = shap.KernelExplainer(max_mdl.predict, X_test.values)
-      shap_values = explainer.shap_values(X_test.values)
-    elif type(max_mdl).__name__ == 'LogisticRegression':
-      explainer = shap.explainers.Permutation(max_mdl.predict, X_test)
-      shap_values = explainer(X_test)
-    elif type(max_mdl).__name__ == 'MLPClassifier':
-      explainer = shap.KernelExplainer(max_mdl.predict, X_test.values)
-      shap_values = explainer.shap_values(X_test.values)
-    elif type(max_mdl).__name__ == 'RandomForestClassifier':
-      explainer = shap.Explainer(max_mdl.predict, X_test)
-      shap_values = explainer(X_test)
-    elif type(max_mdl).__name__ == 'LinearDiscriminantAnalysis':
-      masker = shap.maskers.Independent(data = X_test.values)
-      explainer = shap.LinearExplainer(max_mdl, masker = masker)
-      shap_values = explainer(X_test.values)
-    elif type(max_mdl).__name__ == 'QuadraticDiscriminantAnalysis':
-      explainer = shap.Explainer(max_mdl.predict, X_test.values)
-      shap_values = explainer(X_test.values)
-    elif type(max_mdl).__name__ == 'AdaBoostClassifier':
-      explainer = shap.Explainer(max_mdl.predict, X_test.values)
-      shap_values = explainer(X_test.values)
-    elif type(max_mdl).__name__ == 'GradientBoostingClassifier':
-      explainer = shap.Explainer(max_mdl.predict, X_test.values)
-      shap_values = explainer(X_test.values)
+      # Instantiate an explainer object for our chosen classifier...
+      if type(max_mdl).__name__ == 'DecisionTreeClassifier':
+        explainer = shap.Explainer(max_mdl.predict, X_test.values)
+        shap_values = explainer(X_test.values)
+      elif type(max_mdl).__name__ == 'GaussianNB':
+        explainer = shap.KernelExplainer(max_mdl.predict, X_test.values)
+        shap_values = explainer.shap_values(X_test.values)
+      elif type(max_mdl).__name__ == 'LogisticRegression':
+        explainer = shap.explainers.Permutation(max_mdl.predict, X_test)
+        shap_values = explainer(X_test)
+      elif type(max_mdl).__name__ == 'MLPClassifier':
+        explainer = shap.KernelExplainer(max_mdl.predict, X_test.values)
+        shap_values = explainer.shap_values(X_test.values)
+      elif type(max_mdl).__name__ == 'RandomForestClassifier':
+        explainer = shap.Explainer(max_mdl.predict, X_test)
+        shap_values = explainer(X_test)
+      elif type(max_mdl).__name__ == 'LinearDiscriminantAnalysis':
+        masker = shap.maskers.Independent(data = X_test.values)
+        explainer = shap.LinearExplainer(max_mdl, masker = masker)
+        shap_values = explainer(X_test.values)
+      elif type(max_mdl).__name__ == 'QuadraticDiscriminantAnalysis':
+        explainer = shap.Explainer(max_mdl.predict, X_test.values)
+        shap_values = explainer(X_test.values)
+      elif type(max_mdl).__name__ == 'AdaBoostClassifier':
+        explainer = shap.Explainer(max_mdl.predict, X_test.values)
+        shap_values = explainer(X_test.values)
+      elif type(max_mdl).__name__ == 'GradientBoostingClassifier':
+        explainer = shap.Explainer(max_mdl.predict, X_test.values)
+        shap_values = explainer(X_test.values)
       
     return shap_values, explainer, X_test, X_test_protected_reduced
