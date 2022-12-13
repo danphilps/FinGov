@@ -21,6 +21,7 @@ from sklearn.metrics import f1_score
 from sklearn.metrics import precision_score
 from sklearn.metrics import recall_score
 
+import warnings
 import shap
 
 class StakeholderKPIReporting():
@@ -106,15 +107,15 @@ class StakeholderKPIReporting():
   # Return shap values for the classifier chosen
   @staticmethod
   def classifier_shap_vals(max_mdl: object,
-                            X_test: pd.DataFrame,
-                            X_test_protected: pd.DataFrame,
-                            speed_up: bool = True) -> np.array:
-   #sanity
+                              X_test: pd.DataFrame,
+                              X_test_protected: pd.DataFrame,
+                              speed_up: bool = True) -> np.array:
+    #sanity
     if max_mdl is None:
       raise TypeError('max_mdl is None')
     if X_test_protected.shape[0] != X_test.shape[0]:
       raise TypeError('X_test_protected.shape[0] != X_test.shape[0]')
-    
+
     #Ignore warnings...
     with warnings.catch_warnings():
       warnings.simplefilter("ignore")
@@ -162,5 +163,5 @@ class StakeholderKPIReporting():
       elif type(max_mdl).__name__ == 'GradientBoostingClassifier':
         explainer = shap.Explainer(max_mdl.predict, X_test.values)
         shap_values = explainer(X_test.values)
-      
+
     return shap_values, explainer, X_test, X_test_protected_reduced
