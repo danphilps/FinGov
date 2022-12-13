@@ -105,7 +105,7 @@ setup(
     url=URL,
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     # If your package is a single module, use this instead of 'packages':
-    py_modules=['GovernanceUtils.py', 'FairnessUtils.py', 'StakeholderKPIReporting.py'],
+    py_modules=['GovernanceUtils.py'], #, 'FairnessUtils.py', 'StakeholderKPIReporting.py'],
 
     # entry_points={
     #     'console_scripts': ['mycli=mymodule:cli'],
