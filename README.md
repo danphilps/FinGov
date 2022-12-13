@@ -1,3 +1,7 @@
+![image](https://user-images.githubusercontent.com/55665698/207409340-eb3aab6d-4271-4808-ac59-9d458107b34e.png)
+
+
+
 # FinGov
 Contains utility functions for implementing Machine Learning Governance and Fairness in a Finance process
 
@@ -8,6 +12,8 @@ A Governance framework ensures models in an organisation achieve all their key s
 Manys steps in a Governance Framework are qualitative, requiring professionals to assess, specify, approve or reject stages in model development. However, quantitative tools can be a powerful utility, allowing professionals to control and monitor a process, and reach judgements about model design, stability, and efficacy. 
 
 We discuss the 5 stages of model development and the utility functions that can be used to support the Governance Framework:
+
+  
 
 #### Stage1: Business Analysis
 We first define our stakeholder KPIs, which should be systematically defined. We introduce example functions that go some way to representing stakeholder KPIs, with visualizations, statistical tests and checks where appropriate. 
