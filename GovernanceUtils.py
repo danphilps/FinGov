@@ -283,7 +283,7 @@ class GovernanceUtils():
     vc = VotingClassifier(estimators=challenger_models, voting='soft')
 
     # Fit on the training data to train your live model... 
-    challenger_mdl = vc.fit(X_train.values, y_train.values)
+    challenger_mdl = vc.fit(X_train, y_train.values)
 
     # Challenge! Compare the results
     y_hat = challenger_mdl.predict(X_test)
