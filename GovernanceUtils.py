@@ -110,63 +110,66 @@ class GovernanceUtils():
         all_mdls = [dtc, gnb, lr, mlp, rf, lda, qda, ada, gbc, knn, svc, nsvc]
         all_mdls_desc = ['dtc', 'gnb', 'lr', 'mlp', 'rf', 'lda', 'qda', 'ada', 'gbc', 'knn', 'svc', 'nsvc']
         all_mdls_perf = []
+        
+        with warnings.catch_warnings():
+          warnings.simplefilter("ignore")
 
-        # Loop through each classifer and record the "best"...
-        max_perf = 0
-        for mdl in all_mdls:
-            #Fit model
-            mdl.fit(X_upsampled_smote,y_upsampled_smote)  
-            y_train_hat = mdl.predict(X_upsampled_smote)
-            y_cross_validation_hat = mdl.predict(X_cross_validation)       
+          # Loop through each classifer and record the "best"...
+          max_perf = 0
+          for mdl in all_mdls:
+              #Fit model
+              mdl.fit(X_upsampled_smote,y_upsampled_smote)  
+              y_train_hat = mdl.predict(X_upsampled_smote)
+              y_cross_validation_hat = mdl.predict(X_cross_validation)       
 
-            # Output model selection information....Analytics calculated wrt default or y=1... Print score
-            print(mdl)
-            print(f"Precision train: {precision_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+              # Output model selection information....Analytics calculated wrt default or y=1... Print score
+              print(mdl)
+              print(f"Precision train: {precision_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+              f"{precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
+
+              # Selection based on cross-validation set, ie out of sample data not used in training
+              if selection_criteria == 'precision':
+                this_cv_perf = precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
+              elif selection_criteria == 'recall':
+                this_cv_perf = recall_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
+              elif selection_criteria == 'accuracy':
+                this_cv_perf = mdl.score(X_cross_validation,y_cross_validation)
+              elif selection_criteria == 'f1':
+                this_cv_perf = f1_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
+
+              if this_cv_perf > max_perf:
+                  max_perf = this_cv_perf
+                  max_mdl = mdl
+
+              #Save the F1 score of this model...
+              all_mdls_perf.append(this_cv_perf)
+
+          # The best....
+          #Fit...
+          max_mdl.fit(X_upsampled_smote,y_upsampled_smote)
+          y_train_hat = max_mdl.predict(X_upsampled_smote)
+          y_cross_validation_hat = max_mdl.predict(X_cross_validation)
+
+          # Analytics calculated wrt default or y=1... Print score
+          print('\nWinner\n', type(max_mdl))        
+          print(f"Accuracy train: {max_mdl.score(X_train,y_upsampled_smote):.4f}, cross-validation: ",
+            f"{max_mdl.score(X_cross_validation,y_cross_validation):.4f}")
+          print(f"Precision train: {precision_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
             f"{precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
+          print(f"Recall train: {recall_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+            f"{recall_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
+          print(f"F1 train: {f1_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+            f"{f1_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
 
-            # Selection based on cross-validation set, ie out of sample data not used in training
-            if selection_criteria == 'precision':
-              this_cv_perf = precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
-            elif selection_criteria == 'recall':
-              this_cv_perf = recall_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
-            elif selection_criteria == 'accuracy':
-              this_cv_perf = mdl.score(X_cross_validation,y_cross_validation)
-            elif selection_criteria == 'f1':
-              this_cv_perf = f1_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
+          #Print confusion matrix...
+          cf_matrix = confusion_matrix(y_cross_validation, y_cross_validation_hat, labels=[0, 1]) 
+          cf_matrix_norm = cf_matrix.astype('float')
 
-            if this_cv_perf > max_perf:
-                max_perf = this_cv_perf
-                max_mdl = mdl
-
-            #Save the F1 score of this model...
-            all_mdls_perf.append(this_cv_perf)
-
-        # The best....
-        #Fit...
-        max_mdl.fit(X_upsampled_smote,y_upsampled_smote)
-        y_train_hat = max_mdl.predict(X_upsampled_smote)
-        y_cross_validation_hat = max_mdl.predict(X_cross_validation)
-
-        # Analytics calculated wrt default or y=1... Print score
-        print('\nWinner\n', type(max_mdl))        
-        print(f"Accuracy train: {max_mdl.score(X_train,y_upsampled_smote):.4f}, cross-validation: ",
-          f"{max_mdl.score(X_cross_validation,y_cross_validation):.4f}")
-        print(f"Precision train: {precision_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
-          f"{precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
-        print(f"Recall train: {recall_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
-          f"{recall_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
-        print(f"F1 train: {f1_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
-          f"{f1_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
-
-        #Print confusion matrix...
-        cf_matrix = confusion_matrix(y_cross_validation, y_cross_validation_hat, labels=[0, 1]) 
-        cf_matrix_norm = cf_matrix.astype('float')
-
-        ax = sns.heatmap(cf_matrix_norm, annot=True, cmap='Blues', fmt='g')
-        ax.set_title('Confusion Matrix\n\n');
-        ax.set_xlabel('\nPredicted Values')
-        ax.set_ylabel('Actual Values ');
-        plt.show()
+          ax = sns.heatmap(cf_matrix_norm, annot=True, cmap='Blues', fmt='g')
+          ax.set_title('Confusion Matrix\n\n');
+          ax.set_xlabel('\nPredicted Values')
+          ax.set_ylabel('Actual Values ');
+          plt.show()
       
       #sanity
       if max_mdl is None:
@@ -196,33 +199,33 @@ class GovernanceUtils():
     Author:
         Dan Philps
     '''
-
-    # Run models and compare
-    y_hat_live = live_mod.predict(X_test)
-    y_hat_challenger = challenger_mod.predict(X_test)
-
-    # Compare the precsision of live and challenger
-    live_recall, live_prec = StakeholderKPIReporting.kpi_review_customer_business_compliance(live_mod, X_test, y_test, y_hat_live)
-    challenger_recall, challenger_prec = StakeholderKPIReporting.kpi_review_customer_business_compliance(challenger_mod, X_test, y_test, y_hat_challenger)
-
-    # Simple test
-    err = ''
-    if (challenger_prec - live_prec > precision_fault_threshold):
-        err = 'Precision fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.'
-        print('Precision fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.')
-
-    if (challenger_recall - live_recall > recall_fault_threshold):
-        err = 'Recall fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.'
-        print('Recall fault threshold breached! Challenger model achieving materially better accuracy than live - consider retraining live models.')
-    
-    # Bar chart of prec and recall
-    plt.bar(['live_prec', 'challenger_prec'], [live_prec, challenger_prec], color = 'b')
-    plt.bar(['live_recall', 'challenger_recall'], [live_recall, challenger_recall], color = 'r')
-    plt.title=('Bar chart of Precision and Accuracy')
-    plt.show()
-
     with warnings.catch_warnings():
       warnings.simplefilter("ignore")
+      
+      # Run models and compare
+      y_hat_live = live_mod.predict(X_test)
+      y_hat_challenger = challenger_mod.predict(X_test)
+    
+      # Compare the precsision of live and challenger
+      live_recall, live_prec = StakeholderKPIReporting.kpi_review_customer_business_compliance(live_mod, X_test, y_test, y_hat_live)
+      challenger_recall, challenger_prec = StakeholderKPIReporting.kpi_review_customer_business_compliance(challenger_mod, X_test, y_test, y_hat_challenger)
+
+      # Simple test
+      err = ''
+      if (challenger_prec - live_prec > precision_fault_threshold):
+          err = 'Precision fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.'
+          print('Precision fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.')
+
+      if (challenger_recall - live_recall > recall_fault_threshold):
+          err = 'Recall fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.'
+          print('Recall fault threshold breached! Challenger model achieving materially better accuracy than live - consider retraining live models.')
+
+      # Bar chart of prec and recall
+      plt.bar(['live_prec', 'challenger_prec'], [live_prec, challenger_prec], color = 'b')
+      plt.bar(['live_recall', 'challenger_recall'], [live_recall, challenger_recall], color = 'r')
+      plt.title=('Bar chart of Precision and Accuracy')
+      plt.show()
+
       # ROC Curve
       y_hat_prob_live = live_mod.predict_proba(X_test)[:, 1]
       y_hat_prob_challenger = challenger_mod.predict_proba(X_test)[:, 1]
@@ -275,19 +278,19 @@ class GovernanceUtils():
         raise TypeError('Bad parameter: X_train.shape[0] != y_train.shape[0]')
     if X_test.shape[1] != X_train.shape[1]:
       raise TypeError('Bad parameter: X_train.shape[0] != y_train.shape[0]')
-
-    # Only use classifiers that have generated an above median F1 score out of sample.
-    min_prec_to_use = np.median(all_mdls_prec)
-    
-    # Prepare our models for ensembling
-    challenger_models = []
-    for i in range(0, all_mdls_desc.__len__()):
-      if all_mdls_prec[i] > min_prec_to_use:
-        challenger_models.append((all_mdls_desc[i], all_mdls[i]))
-    
-    # Supress warnings
+  
+   # Supress warnings
     with warnings.catch_warnings():
       warnings.simplefilter("ignore")
+   
+      # Only use classifiers that have generated an above median F1 score out of sample.
+      min_prec_to_use = np.median(all_mdls_prec)
+
+      # Prepare our models for ensembling
+      challenger_models = []
+      for i in range(0, all_mdls_desc.__len__()):
+        if all_mdls_prec[i] > min_prec_to_use:
+          challenger_models.append((all_mdls_desc[i], all_mdls[i]))
 
       # Instantiate ...
       vc = VotingClassifier(estimators=challenger_models, voting='soft')
