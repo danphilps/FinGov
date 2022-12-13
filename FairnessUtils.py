@@ -31,11 +31,10 @@ class FairnessUtils():
         X_test: X data, including the category_col_name you want to examine 
         y_test: y data, including the category_col_name you want to examine
         X_test_category_col: column - corresponding to X_test and y_test in which categories are contained we want to test for fairness
-        y_approval_threshold: We are forevcasting the probability of default, this is the threashold over which we assume credit will be offered
+        y_approval_threshold: We are forecasting the probability of default (0=0% probability of default, 1=100% probability of default), this is the probability threshold over which we offer loans
         
     Returns:
         df_stats: record of the accuracy (etc) of the model on each category. Examine this for fairness...###
-
     Author:
       Madhu Nagarajan
     '''
@@ -147,7 +146,6 @@ class FairnessUtils():
     
     Author:
       Madhu Nagarajan, Dan Philps
-
     fairness_metric = 'recall'
     threshold_metric = "precision"
     majority_class = "Male"
@@ -159,7 +157,7 @@ class FairnessUtils():
 
     #Try with multiple threshold values from 0.5 to 1.0.
     df_stats_per_iteration = None
-    for a_threshold in range (50, 100, 1):
+    for a_threshold in range (25, 100, 1):
         fair_model = True
         
         #get the model metrics for a speicific threshold values
@@ -202,9 +200,9 @@ class FairnessUtils():
 
         # metric to maximize!
         current_maximization_metric = df_stats.loc[df_stats["cat"]=="All"][threshold_metric].astype('float64')[0]
-        
+
         #if the model is found fair for all population groups (other than the majority one), then check if the model has a higher maximization metric. if so save the threshold value
-        if fair_model:
+        if fair_model == True:
             if current_maximization_metric > high_maximization_metric:
                 high_maximization_metric = current_maximization_metric
                 high_threshold = a_threshold
@@ -234,17 +232,17 @@ class FairnessUtils():
       for j in range(df_cats_per_iteration.shape[1]): 
         Y_val = df_cats_per_iteration.iloc[:,j].values
         # Add some text for labels, title and custom x-axis tick labels, etc.
-        plt.plot(df_cats_per_iteration.index, Y_val, label='Threshold: ' + df_cats_per_iteration.columns[j], color=cmap(j))
+        plt.plot(df_cats_per_iteration.index, Y_val, label='Fairness: ' + df_cats_per_iteration.columns[j], color=cmap(j))
 
       # each col
       for j in range(df_stats_per_iteration.shape[1]): 
         Y_val = df_stats_per_iteration.iloc[:,j].values
         # Add some text for labels, title and custom x-axis tick labels, etc.
-        plt.plot(df_stats_per_iteration.index, Y_val, label='Fairness: ' + df_stats_per_iteration.columns[j], color=cmap(j), linestyle='--')
+        plt.plot(df_stats_per_iteration.index, Y_val, label='Threshold: ' + df_stats_per_iteration.columns[j], color=cmap(j), linestyle='--')
 
       plt.axvline(opt_threshold*100,color='black', label='Optimum threshold')
-      plt.xlabel('Probability of default (%)')
-      plt.ylabel('Measure of Threashold and Fairness')
+      plt.xlabel('Loans refused at what probability of default (%)?')
+      plt.ylabel('Measure of Threshold and Fairness')
       plt.legend()
       plt.show()
 
