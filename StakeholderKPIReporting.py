@@ -135,33 +135,42 @@ class StakeholderKPIReporting():
           X_test_protected_reduced = X_test_protected.loc[idx_bool]
 
       # Instantiate an explainer object for our chosen classifier...
-      if type(max_mdl).__name__ == 'DecisionTreeClassifier':
-        explainer = shap.Explainer(max_mdl.predict, X_test.values)
-        shap_values = explainer(X_test.values)
-      elif type(max_mdl).__name__ == 'GaussianNB':
-        explainer = shap.KernelExplainer(max_mdl.predict, X_test.values)
-        shap_values = explainer.shap_values(X_test.values)
-      elif type(max_mdl).__name__ == 'LogisticRegression':
-        explainer = shap.explainers.Permutation(max_mdl.predict, X_test)
-        shap_values = explainer(X_test)
-      elif type(max_mdl).__name__ == 'MLPClassifier':
-        explainer = shap.KernelExplainer(max_mdl.predict, X_test.values)
-        shap_values = explainer.shap_values(X_test.values)
-      elif type(max_mdl).__name__ == 'RandomForestClassifier':
+      if type(max_mdl).__name__ == 'DecisionTreeClassifier': # GOOD
         explainer = shap.Explainer(max_mdl.predict, X_test)
         shap_values = explainer(X_test)
-      elif type(max_mdl).__name__ == 'LinearDiscriminantAnalysis':
-        masker = shap.maskers.Independent(data = X_test.values)
+      elif type(max_mdl).__name__ == 'KNeighborsClassifier': # GOOD
+        explainer = shap.Explainer(max_mdl.predict, X_test)
+        shap_values = explainer(X_test)
+      elif type(max_mdl).__name__ == 'GaussianNB': # GOOD
+        explainer = shap.Explainer(max_mdl.predict,X_train)
+        shap_values = explainer(X_train)
+      elif type(max_mdl).__name__ == 'LogisticRegression':  # GOOD
+        explainer = shap.Explainer(max_mdl.predict, X_test)
+        shap_values = explainer(X_test)
+      elif type(max_mdl).__name__ == 'MLPClassifier': # GOOD
+        explainer = shap.Explainer(max_mdl.predict, X_test)
+        shap_values = explainer(X_test)
+      elif type(max_mdl).__name__ == 'RandomForestClassifier': # GOOD
+        explainer = shap.Explainer(max_mdl.predict, X_test)
+        shap_values = explainer(X_test)
+      elif type(max_mdl).__name__ == 'LinearDiscriminantAnalysis': # GOOD
+        masker = shap.maskers.Independent(data = X_test)
         explainer = shap.LinearExplainer(max_mdl, masker = masker)
+        shap_values = explainer(X_test)
+      elif type(max_mdl).__name__ == 'QuadraticDiscriminantAnalysis': # GOOD
+        explainer = shap.Explainer(max_mdl.predict, X_test)
         shap_values = explainer(X_test.values)
-      elif type(max_mdl).__name__ == 'QuadraticDiscriminantAnalysis':
-        explainer = shap.Explainer(max_mdl.predict, X_test.values)
-        shap_values = explainer(X_test.values)
-      elif type(max_mdl).__name__ == 'AdaBoostClassifier':
-        explainer = shap.Explainer(max_mdl.predict, X_test.values)
-        shap_values = explainer(X_test.values)
+      elif type(max_mdl).__name__ == 'AdaBoostClassifier':  # GOOD
+        explainer = shap.Explainer(max_mdl.predict, X_test)
+        shap_values = explainer(X_test)
       elif type(max_mdl).__name__ == 'GradientBoostingClassifier':
-        explainer = shap.Explainer(max_mdl.predict, X_test.values)
-        shap_values = explainer(X_test.values)
+        explainer = shap.Explainer(max_mdl.predict, X_test)
+        shap_values = explainer(X_test)
+      elif type(max_mdl).__name__ == 'SVC':  # GOOD
+        explainer = shap.Explainer(max_mdl.predict, X_test)
+        shap_values = explainer(X_test)
+      elif type(max_mdl).__name__ == 'NuSVC':  # GOOD
+        explainer = shap.Explainer(max_mdl.predict, X_test)
+        shap_values = explainer(X_test)
 
-    return shap_values, explainer, X_test, X_test_protected_reduced
+      return shap_values, explainer, X_test, X_test_protected_reduced
