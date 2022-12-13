@@ -287,7 +287,7 @@ class GovernanceUtils():
     
     # Supress warnings
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+      warnings.simplefilter("ignore")
 
       # Instantiate ...
       vc = VotingClassifier(estimators=challenger_models, voting='soft')
