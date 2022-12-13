@@ -284,15 +284,19 @@ class GovernanceUtils():
     for i in range(0, all_mdls_desc.__len__()):
       if all_mdls_prec[i] > min_prec_to_use:
         challenger_models.append((all_mdls_desc[i], all_mdls[i]))
+    
+    # Supress warnings
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
 
-    # Instantiate ...
-    vc = VotingClassifier(estimators=challenger_models, voting='soft')
+      # Instantiate ...
+      vc = VotingClassifier(estimators=challenger_models, voting='soft')
 
-    # Fit on the training data to train your live model... 
-    challenger_mdl = vc.fit(X_train, y_train.values)
+      # Fit on the training data to train your live model... 
+      challenger_mdl = vc.fit(X_train, y_train.values)
 
-    # Challenge! Compare the results
-    y_hat = challenger_mdl.predict(X_test)
+      # Challenge! Compare the results
+      y_hat = challenger_mdl.predict(X_test)
     
     return y_hat, challenger_mdl
 
