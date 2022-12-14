@@ -13,7 +13,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.ensemble import RandomForestClassifier
 import math
 
-import warning
+import warnings
 
 class FairnessUtils():
 
