@@ -353,7 +353,7 @@ class FairnessUtils():
   def plot_fairness_charts (df_stats: pd.DataFrame, 
                         majority_class: str = 'Female',
                         fairness_metric: str = 'precision',
-                        threshold_metric: str = 'recall,
+                        threshold_metric: str = 'recall',
                         y_approval_threshold: float = 0.5) -> pd.DataFrame:
     
       '''    
