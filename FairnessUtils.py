@@ -172,7 +172,7 @@ class FairnessUtils():
     # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     # To supress warnings in notebooks - remove this if running in any other context
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore")
+      warnings.simplefilter("ignore")
     
       #Try with multiple threshold values from 0.5 to 1.0.
       df_stats_per_iteration = None
