@@ -13,6 +13,8 @@ from sklearn.metrics import confusion_matrix
 from sklearn.ensemble import RandomForestClassifier
 import math
 
+import warning
+
 class FairnessUtils():
 
   # Fairness: run the model on different groups, and get precision, accuracy, f1 and so on, for each model run/group
@@ -166,102 +168,107 @@ class FairnessUtils():
     # Ini
     high_threshold = -999
     high_maximization_metric = -999
+    
+    # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+    # To supress warnings in notebooks - remove this if running in any other context
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+    
+      #Try with multiple threshold values from 0.5 to 1.0.
+      df_stats_per_iteration = None
+      for a_threshold in range (25, 100, 1):
+          fair_model = True
 
-    #Try with multiple threshold values from 0.5 to 1.0.
-    df_stats_per_iteration = None
-    for a_threshold in range (25, 100, 1):
-        fair_model = True
-        
-        #get the model metrics for a speicific threshold values
-        df_stats = FairnessUtils.fairness_stats_get (mod, X_test, y_test, X_test_category_col, a_threshold/100)
+          #get the model metrics for a speicific threshold values
+          df_stats = FairnessUtils.fairness_stats_get (mod, X_test, y_test, X_test_category_col, a_threshold/100)
 
-        # record results for each iteration
-        if df_stats_per_iteration is None:
-          df_stats_per_iteration = pd.DataFrame(np.zeros((0,df_stats.shape[0])))
-          df_stats_per_iteration.columns = df_stats.index
-          df_cats_per_iteration = None
+          # record results for each iteration
+          if df_stats_per_iteration is None:
+            df_stats_per_iteration = pd.DataFrame(np.zeros((0,df_stats.shape[0])))
+            df_stats_per_iteration.columns = df_stats.index
+            df_cats_per_iteration = None
 
-        #get the metric to compare for the majority class (e.g. Male)
-        majority_class_metric  = df_stats.loc[df_stats["cat"] == majority_class, fairness_metric].astype('float64')[0]
-        compare_metric = 0
+          #get the metric to compare for the majority class (e.g. Male)
+          majority_class_metric  = df_stats.loc[df_stats["cat"] == majority_class, fairness_metric].astype('float64')[0]
+          compare_metric = 0
 
-        # Store values for the charts later
-        if df_cats_per_iteration is None:
-          df_cats_per_iteration = pd.DataFrame(np.zeros((0,df_stats['cat'].shape[0])))
-          df_cats_per_iteration.columns = df_stats['cat'].values
+          # Store values for the charts later
+          if df_cats_per_iteration is None:
+            df_cats_per_iteration = pd.DataFrame(np.zeros((0,df_stats['cat'].shape[0])))
+            df_cats_per_iteration.columns = df_stats['cat'].values
 
-        #Iterate through the various values for the selected group
-        cats_per_iteration = None
-        for cat in df_stats['cat'].values:
-            #ignore the category values of All and the majority class. obtain the fairness metric for the other population groups
-            res_metric = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
-            
-            if cat not in ["All", majority_class]:
-              compare_metric = res_metric
-              #Ensure the metric for all non majority classes are within limits, one sided ensures that the non majority classes are not worse off
-              if (majority_class_metric * 0.8 > compare_metric):  
-                  
-                  #if any metric is below limit, then set the model as not fair
-                  fair_model = 'False'
-                  #and try the next threshold
+          #Iterate through the various values for the selected group
+          cats_per_iteration = None
+          for cat in df_stats['cat'].values:
+              #ignore the category values of All and the majority class. obtain the fairness metric for the other population groups
+              res_metric = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
 
-            # record results...
-            if cats_per_iteration is None:
-              cats_per_iteration = list()
-            cats_per_iteration.append(res_metric)
+              if cat not in ["All", majority_class]:
+                compare_metric = res_metric
+                #Ensure the metric for all non majority classes are within limits, one sided ensures that the non majority classes are not worse off
+                if (majority_class_metric * 0.8 > compare_metric):  
 
-        # metric to maximize!
-        current_maximization_metric = df_stats.loc[df_stats["cat"]=="All"][threshold_metric].astype('float64')[0]
+                    #if any metric is below limit, then set the model as not fair
+                    fair_model = 'False'
+                    #and try the next threshold
 
-        #if the model is found fair for all population groups (other than the majority one), then check if the model has a higher maximization metric. if so save the threshold value
-        if fair_model == True:
-            # Only save the highest within the bounds specified:
-            if (a_threshold > threshold_min_max[0]) & (a_threshold < threshold_min_max[1]):
-              if current_maximization_metric > high_maximization_metric:
-                  high_maximization_metric = current_maximization_metric
-                  high_threshold = a_threshold
-        
-        # record results...
-        df_stats_per_iteration.loc[a_threshold] = df_stats[threshold_metric].T.values
-        df_cats_per_iteration.loc[a_threshold] = cats_per_iteration
-        
-    if high_maximization_metric > 0:
-        df_stats = FairnessUtils.fairness_stats_get (mod, X_test, y_test, X_test_category_col, high_threshold/100)
-        FairnessUtils.plot_fairness_charts(df_stats, majority_class, fairness_metric, threshold_metric)
-        opt_threshold = high_threshold/100
-    else:
-        opt_threshold = np.nan
+              # record results...
+              if cats_per_iteration is None:
+                cats_per_iteration = list()
+              cats_per_iteration.append(res_metric)
 
-    # show training curve
-    if show_charts:
-      # map colors...
-      def get_cmap(n, name='hsv'):
-        '''Returns a function that maps each index in 0, 1, ..., n-1 to a distinct 
-        RGB color; the keyword argument name must be a standard mpl colormap name.'''
-        return plt.cm.get_cmap(name, n)
-      cmap = get_cmap(10)  
+          # metric to maximize!
+          current_maximization_metric = df_stats.loc[df_stats["cat"]=="All"][threshold_metric].astype('float64')[0]
 
-      plt.set_title= 'Learning curve for Credit Approvals Model: (threshold_metric:' + threshold_metric + ', while monitoring fairness metric ' +  fairness_metric +  ')'
-      plt.figure(figsize=(15,10))
-      for j in range(df_cats_per_iteration.shape[1]): 
-        Y_val = df_cats_per_iteration.iloc[:,j].values
-        # Add some text for labels, title and custom x-axis tick labels, etc.
-        plt.plot(df_cats_per_iteration.index, Y_val, label='Fairness: ' + df_cats_per_iteration.columns[j], color=cmap(j))
+          #if the model is found fair for all population groups (other than the majority one), then check if the model has a higher maximization metric. if so save the threshold value
+          if fair_model == True:
+              # Only save the highest within the bounds specified:
+              if (a_threshold > threshold_min_max[0]) & (a_threshold < threshold_min_max[1]):
+                if current_maximization_metric > high_maximization_metric:
+                    high_maximization_metric = current_maximization_metric
+                    high_threshold = a_threshold
 
-      # each col
-      for j in range(df_stats_per_iteration.shape[1]): 
-        Y_val = df_stats_per_iteration.iloc[:,j].values
-        # Add some text for labels, title and custom x-axis tick labels, etc.
-        plt.plot(df_stats_per_iteration.index, Y_val, label='Threshold: ' + df_stats_per_iteration.columns[j], color=cmap(j), linestyle='--')
+          # record results...
+          df_stats_per_iteration.loc[a_threshold] = df_stats[threshold_metric].T.values
+          df_cats_per_iteration.loc[a_threshold] = cats_per_iteration
 
-      plt.axvline(opt_threshold*100,color='black', label='Optimum threshold')
-      plt.xlabel('Loans refused at what probability of default (%)?')
-      plt.ylabel('Measure of Threshold and Fairness')
-      plt.legend()
-      plt.show()
+      if high_maximization_metric > 0:
+          df_stats = FairnessUtils.fairness_stats_get (mod, X_test, y_test, X_test_category_col, high_threshold/100)
+          FairnessUtils.plot_fairness_charts(df_stats, majority_class, fairness_metric, threshold_metric)
+          opt_threshold = high_threshold/100
+      else:
+          opt_threshold = np.nan
 
-    # Print the optimal threshold....
-    print('Optimal threshold: ' + str(opt_threshold))
+      # show training curve
+      if show_charts:
+        # map colors...
+        def get_cmap(n, name='hsv'):
+          '''Returns a function that maps each index in 0, 1, ..., n-1 to a distinct 
+          RGB color; the keyword argument name must be a standard mpl colormap name.'''
+          return plt.cm.get_cmap(name, n)
+        cmap = get_cmap(10)  
+
+        plt.set_title= 'Learning curve for Credit Approvals Model: (threshold_metric:' + threshold_metric + ', while monitoring fairness metric ' +  fairness_metric +  ')'
+        plt.figure(figsize=(15,10))
+        for j in range(df_cats_per_iteration.shape[1]): 
+          Y_val = df_cats_per_iteration.iloc[:,j].values
+          # Add some text for labels, title and custom x-axis tick labels, etc.
+          plt.plot(df_cats_per_iteration.index, Y_val, label='Fairness: ' + df_cats_per_iteration.columns[j], color=cmap(j))
+
+        # each col
+        for j in range(df_stats_per_iteration.shape[1]): 
+          Y_val = df_stats_per_iteration.iloc[:,j].values
+          # Add some text for labels, title and custom x-axis tick labels, etc.
+          plt.plot(df_stats_per_iteration.index, Y_val, label='Threshold: ' + df_stats_per_iteration.columns[j], color=cmap(j), linestyle='--')
+
+        plt.axvline(opt_threshold*100,color='black', label='Optimum threshold')
+        plt.xlabel('Loans refused at what probability of default (%)?')
+        plt.ylabel('Measure of Threshold and Fairness')
+        plt.legend()
+        plt.show()
+
+      # Print the optimal threshold....
+      print('Optimal threshold: ' + str(opt_threshold))
 
     return opt_threshold
 
