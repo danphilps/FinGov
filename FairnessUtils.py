@@ -36,7 +36,7 @@ class FairnessUtils():
     Returns:
         df_stats: record of the accuracy (etc) of the model on each category. Examine this for fairness...###
     Author:
-      Madhu Nagarajan
+      Madhu Nagarajan, Dan Philps
     '''
 
     #Sanity
@@ -131,24 +131,25 @@ class FairnessUtils():
                         y_test: pd.DataFrame, 
                         X_test_category_col: pd.DataFrame,
                         majority_class: str = 'male',
-                        fairness_metric: str = 'recall',
-                        threshold_metric: str = 'precision',
+                        fairness_metric: str = 'precision',
+                        threshold_metric: str = 'recall',
                         show_charts: bool = True) -> float:   
     ''' 
     Args:
-        df_stats: record of the accuracy (etc) of the model on each category.
+        mod: sklearn model, trained without the category_col_name, and ready to test for biases.
+        X_test: X data, including the category_col_name you want to examine 
+        y_test: y data, including the category_col_name you want to examine
+        X_test_category_col: pd.DataFrame,
         majority_class: string - the value of the majority class against which the other population groups are compared with (e.g. ["Male"])
-        fairness_metric: array with the fairness metrics to compare e.g. ["recall"]
-        
+        fairness_metric: array with the fairness metrics to compare e.g. ["precision"]
+        threshold_metric: Lender metric to optimize on...
+        show_charts: ...
     Returns:
         (A plot charting the fairness metric values to the various population groups...)
         optimal_threshold: a float with value showing the "best" cut off for threshold_metric, while satifying fairness_metric based on the category X_test_category_col and the majority_class
     
     Author:
       Madhu Nagarajan, Dan Philps
-    fairness_metric = 'recall'
-    threshold_metric = "precision"
-    majority_class = "Male"
     '''
 
     # Ini
@@ -351,16 +352,17 @@ class FairnessUtils():
   @staticmethod
   def plot_fairness_charts (df_stats: pd.DataFrame, 
                         majority_class: str = 'Female',
-                        fairness_metric: str = "recall",
-                        threshold_metric: str = "precision",
+                        fairness_metric: str = 'precision',
+                        threshold_metric: str = 'recall,
                         y_approval_threshold: float = 0.5) -> pd.DataFrame:
     
       '''    
       Args:
           df_stats: record of the accuracy (etc) of the model on each category.
           majority_class: string (must be a string) - the value of the majority class against which the other population groups are compared with (e.g. ["Male"])
-          fairness_metric: array with the fairness metrics to compare e.g. ["recall"]
-          
+          fairness_metric: array with the fairness metrics to compare e.g. ["precision"]
+          threshold_metric: Lender metric to optimize on...
+        
       Returns:
           A plot charting the fairness metric values to the various population groups...
       
