@@ -154,8 +154,8 @@ class FairnessUtils():
     '''
     
     # Sanity
-    if type(threshold_min_max) <> list:
-      raise TypeError('type(threshold_min_max) <> list')
+    if type(threshold_min_max) != list:
+      raise TypeError('type(threshold_min_max) != list')
     if len(threshold_min_max) != 2:
       raise TypeError('threshold_min_max needs 2 elements: from and to')
     if threshold_min_max[0] > threshold_min_max[1]:
