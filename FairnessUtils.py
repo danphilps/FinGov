@@ -133,6 +133,7 @@ class FairnessUtils():
                         majority_class: str = 'male',
                         fairness_metric: str = 'precision',
                         threshold_metric: str = 'recall',
+                        threshold_min_max: list = [50,80],              
                         show_charts: bool = True) -> float:   
     ''' 
     Args:
@@ -151,7 +152,17 @@ class FairnessUtils():
     Author:
       Madhu Nagarajan, Dan Philps
     '''
-
+    
+    # Sanity
+    if type(threshold_min_max) <> list:
+      raise TypeError('type(threshold_min_max) <> list')
+    if len(threshold_min_max) != 2:
+      raise TypeError('threshold_min_max needs 2 elements: from and to')
+    if threshold_min_max[0] > threshold_min_max[1]:
+      raise TypeError('threshold_min_max[0] > threshold_min_max[1]')
+    if threshold_min_max[1] <=1:
+      raise TypeError('threshold_min_max[1] should be in the 0-100 range not 0-1')
+        
     # Ini
     high_threshold = -999
     high_maximization_metric = -999
@@ -204,9 +215,11 @@ class FairnessUtils():
 
         #if the model is found fair for all population groups (other than the majority one), then check if the model has a higher maximization metric. if so save the threshold value
         if fair_model == True:
-            if current_maximization_metric > high_maximization_metric:
-                high_maximization_metric = current_maximization_metric
-                high_threshold = a_threshold
+            # Only save the highest within the bounds specified:
+            if (a_threshold > threshold_min_max[0]) & (a_threshold < threshold_min_max[1]):
+              if current_maximization_metric > high_maximization_metric:
+                  high_maximization_metric = current_maximization_metric
+                  high_threshold = a_threshold
         
         # record results...
         df_stats_per_iteration.loc[a_threshold] = df_stats[threshold_metric].T.values
