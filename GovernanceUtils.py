@@ -368,7 +368,7 @@ class GovernanceUtils():
 
     #Rule of thumb... highest frequency class < 70% of observations
     imbalanced = False
-    perc_split = df_y.value_counts() / df_y.shape[0]
+    perc_split = y.value_counts() / df_y.shape[0]
     if np.max(perc_split) >= 0.7:
       print('Imbalanced y variable!')
       imbalanced = True
