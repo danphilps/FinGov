@@ -252,7 +252,7 @@ class FairnessUtils():
           return plt.cm.get_cmap(name, n)
         cmap = get_cmap(10)  
 
-        plt.set_title= 'Learning curve for Credit Approvals Model: (threshold_metric:' + threshold_metric + ', while monitoring fairness metric ' +  fairness_metric +  ')'
+        plt.set_title('Learning curve for Credit Approvals Model: (threshold_metric:' + threshold_metric + ', while monitoring fairness metric ' +  fairness_metric +  ')')
         plt.figure(figsize=(15,10))
         for j in range(df_cats_per_iteration.shape[1]): 
           Y_val = df_cats_per_iteration.iloc[:,j].values
