@@ -423,30 +423,34 @@ class FairnessUtils():
     
       width = 0.9  # the width of the bars
       
-      fig, ax = plt.subplots(nrows=1, ncols=N ,  figsize=(8,6))
-      i = 0
-      for ametric in bars_to_plot: 
-        #Get the metric corresponding to the majority - e.g. the recall corresponding to Male group
-        majority_class_metric  = df_stats.loc[df_stats["cat"] == majority_class, ametric].astype('float64')
+      # Remove warning supression if we are using this functions in anger
+      with warnings:
+        warnings.simplefilter("ignore")
+      
+        fig, ax = plt.subplots(nrows=1, ncols=N ,  figsize=(8,6))
+        i = 0
+        for ametric in bars_to_plot: 
+          #Get the metric corresponding to the majority - e.g. the recall corresponding to Male group
+          majority_class_metric  = df_stats.loc[df_stats["cat"] == majority_class, ametric].astype('float64')
 
-        #Y values to plot are the metrics of population groups, get them from df_stats
-        Y_val = df_stats[ametric].values.tolist()
-        
-        ax[i].clear()
-        
-        #The plot displays a range that is +/- 20% from the metric for the majority class
-        ax[i].axhline(y=majority_class_metric.values[0]*0.8,color='red', label='Upper unfairness bound')
-        ax[i].axhline(y=majority_class_metric.values[0],color='green', label='Fairness parity')
-        ax[i].axhline(y=majority_class_metric.values[0]*1.2,color='red', label='Lower unfairness bound')
-        ax[i].legend(loc='lower center')
+          #Y values to plot are the metrics of population groups, get them from df_stats
+          Y_val = df_stats[ametric].values.tolist()
 
-        # Add some text for labels, title and custom x-axis tick labels, etc.
-        ax[i].set_ylabel('%')
-        ax[i].set_xticklabels(X_val, rotation = 45, ha="right")
-        ax[i].title.set_text(ametric)
-        ax[i].bar(X_val, Y_val, width, label=ametric, color=cmap(i))
+          ax[i].clear()
 
-        i += 1
-       
-      fig.suptitle('Fairness: Monitor ' + threshold_metric + ' and ' + fairness_metric + ' for fairness')
-      plt.show()
+          #The plot displays a range that is +/- 20% from the metric for the majority class
+          ax[i].axhline(y=majority_class_metric.values[0]*0.8,color='red', label='Upper unfairness bound')
+          ax[i].axhline(y=majority_class_metric.values[0],color='green', label='Fairness parity')
+          ax[i].axhline(y=majority_class_metric.values[0]*1.2,color='red', label='Lower unfairness bound')
+          ax[i].legend(loc='lower center')
+
+          # Add some text for labels, title and custom x-axis tick labels, etc.
+          ax[i].set_ylabel('%')
+          ax[i].set_xticklabels(X_val, rotation = 45, ha="right")
+          ax[i].title.set_text(ametric)
+          ax[i].bar(X_val, Y_val, width, label=ametric, color=cmap(i))
+
+          i += 1
+
+        fig.suptitle('Fairness: Monitor ' + threshold_metric + ' and ' + fairness_metric + ' for fairness')
+        plt.show()
