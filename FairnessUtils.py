@@ -192,7 +192,7 @@ class FairnessUtils():
           majority_class_metric  = df_stats.loc[df_stats["cat"] == majority_class, fairness_metric].astype('float64')[0]
           compare_metric = 0
                     
-          majority_class_metric_threshold  = df_stats.loc[df_stats["cat"] == majority_class, threhold_metric].astype('float64')[0]
+          majority_class_metric_threshold  = df_stats.loc[df_stats["cat"] == majority_class, threshold_metric].astype('float64')[0]
           compare_metric_threshold = 0
 
           # Store values for the charts later
@@ -204,15 +204,13 @@ class FairnessUtils():
           cats_per_iteration = None
           for cat in df_stats['cat'].values:
               #ignore the category values of All and the majority class. obtain the fairness metric for the other population groups
-              fairness_metric = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
-              threhold_metric = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
+              fairness_val = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
+              threhold_val = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
 
               if cat not in ["All", majority_class]:
-                compare_metric = fairness_metric
-                compare_metric_threshold = threhold_metric
                 #Ensure the metric for all non majority classes are within limits, one sided ensures that the non majority classes are not worse off
-                if (majority_class_metric * 0.8 > compare_metric):  
-                  if (majority_class_metric_threshold * 0.8 > compare_metric_threshold):  
+                if (majority_class_metric * 0.8 > fairness_val):  
+                  if (majority_class_metric_threshold * 0.8 > threhold_val):  
 
                     #if any metric is below limit, then set the model as not fair
                     fair_model = 'False'
