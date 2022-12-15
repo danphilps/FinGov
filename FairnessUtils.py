@@ -136,7 +136,7 @@ class FairnessUtils():
                         fairness_metric: str = 'precision',
                         threshold_metric: str = 'recall',
                         threshold_min_max: list = [50,80],
-                        fairness_tolerance: float = 0.2,
+                        fairness_tolerance: float = 0.8,
                         show_charts: bool = True) -> float:   
     ''' 
     Args:
