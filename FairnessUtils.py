@@ -424,9 +424,10 @@ class FairnessUtils():
         ax[i].clear()
         
         #The plot displays a range that is +/- 20% from the metric for the majority class
-        ax[i].axhline(y=majority_class_metric.values[0]*0.8,color='red', label='Upper unfairness bound')
-        ax[i].axhline(y=majority_class_metric.values[0],color='green', label='Fairness parity')
-        ax[i].axhline(y=majority_class_metric.values[0]*1.2,color='red', label='Lower unfairness bound')
+        if ametric == fairness_metric:
+          ax[i].axhline(y=majority_class_metric.values[0]*0.8,color='red', label='Upper unfairness bound')
+          ax[i].axhline(y=majority_class_metric.values[0],color='green', label='Fairness parity')
+          ax[i].axhline(y=majority_class_metric.values[0]*1.2,color='red', label='Lower unfairness bound')
 
         # Add some text for labels, title and custom x-axis tick labels, etc.
         ax[i].set_ylabel('%')
