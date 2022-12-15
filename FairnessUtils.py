@@ -294,7 +294,7 @@ class FairnessUtils():
 
       # Plot the feature importance
       shap.plots.bar(shap_values.cohorts(curr_prot_cats).abs.mean(0), show=False)
-      plt.title= "Bias Check: Feature Importance of protected group: " + prot_char
+      plt.title("Bias Check: Feature Importance of protected group: " + prot_char)
       plt.show()
     return
     # Ini
@@ -414,7 +414,7 @@ class FairnessUtils():
       cmap = get_cmap(10)
     
       width = 0.9  # the width of the bars
-      plt.title = 'Fairness: Maximising threshold Metric (' + threshold_metric + '), while monitoring fairness metric p (' +  threshold_metric +  ')'
+      plt.title('Fairness: Maximising threshold Metric (' + threshold_metric + '), while monitoring fairness metric p (' +  threshold_metric +  ')')
 
       fig, ax = plt.subplots(nrows=1, ncols=N ,  figsize=(8,6))
       i = 0
