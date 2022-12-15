@@ -44,7 +44,7 @@ class GovernanceUtils():
                               y_train: pd.DataFrame, 
                               y_cross_validation: pd.DataFrame, 
                               selection_criteria: str = 'precision',
-                              balance_method == '') -> (object, list, list, list):
+                              balance_method: str = '') -> (object, list, list, list):
       
       '''
       Args:
