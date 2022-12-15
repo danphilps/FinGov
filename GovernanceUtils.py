@@ -178,7 +178,7 @@ class GovernanceUtils():
       return max_mdl, all_mdls, all_mdls_desc, all_mdls_perf
 
   # Prepare data for predictions
-  def norm_X(X_train: pd.DataFrame
+  def norm_X(X_train: pd.DataFrame,
               X_test: pd.DataFrame) -> pd.DataFrame:
     '''
     Args:
