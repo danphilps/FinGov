@@ -71,8 +71,8 @@ class GovernanceUtils():
         raise TypeError('Bad parameter: X_train.shape[0] != y_train.shape[0]')
       if (X_train.dtypes != X_cross_validation.dtypes).sum() != 0:
         raise TypeError('Bad parameter: X_train.dtype != X_cross_validation.dtype')
-      if (y_train.dtypes != y_cross_validation.dtypes):
-        raise TypeError('Bad parameter: y_train.dtype != y_cross_validation.dtype')
+      #if (y_train.dtypes != y_cross_validation.dtypes):
+      #  raise TypeError('Bad parameter: y_train.dtype != y_cross_validation.dtype')
       if selection_criteria not in ['precision','recall','accuracy','f1']:
         raise TypeError("selection_criteria not in ['precision','recall','accuracy','f1']")
 
