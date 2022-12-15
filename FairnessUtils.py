@@ -428,11 +428,11 @@ class FairnessUtils():
           ax[i].axhline(y=majority_class_metric.values[0]*0.8,color='red', label='Upper unfairness bound')
           ax[i].axhline(y=majority_class_metric.values[0],color='green', label='Fairness parity')
           ax[i].axhline(y=majority_class_metric.values[0]*1.2,color='red', label='Lower unfairness bound')
-
+          ax[i].legend(loc='lower center')
+        
         # Add some text for labels, title and custom x-axis tick labels, etc.
         ax[i].set_ylabel('%')
         ax[i].set_xticklabels(X_val, rotation = 45, ha="right")
-        ax[i].legend(loc='lower center')
         ax[i].title.set_text(ametric)
         ax[i].bar(X_val, Y_val, width, label=ametric, color=cmap(i))
 
