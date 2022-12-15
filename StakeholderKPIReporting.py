@@ -89,7 +89,7 @@ class StakeholderKPIReporting():
       # ROC Curve
       metrics.plot_roc_curve(mdl, X, y) 
       fpr, tpr, thresholds = metrics.roc_curve(y, y_hat)
-      plt.title ='Credit Decisions ROC Curve'
+      plt.title('Credit Decisions ROC Curve')
       plt.show()
     return f1, prec, rec
   
@@ -97,12 +97,12 @@ class StakeholderKPIReporting():
   def kpi_review_analyst2(shap_values: np.array):    
     # plot the feature importance
     shap.plots.bar(shap_values=shap_values, max_display=30, show=False)
-    plt.title = "Feature Importance: Credit-Use Case Feature Importance"
+    plt.title("Feature Importance: Credit-Use Case Feature Importance")
     plt.show()
 
     # shap summary plot
     shap.summary_plot(shap_values, show=False)
-    plt.title = "Beeswarm: Credit-Use Case Feature Importance and Dependency"
+    plt.title("Beeswarm: Credit-Use Case Feature Importance and Dependency")
     plt.show()
     return
 
