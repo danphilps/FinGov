@@ -219,7 +219,7 @@ class FairnessUtils():
               # record results...
               if cats_per_iteration is None:
                 cats_per_iteration = list()
-              cats_per_iteration.append(res_metric)
+              cats_per_iteration.append(fairness_val)
 
           # metric to maximize!
           current_maximization_metric = df_stats.loc[df_stats["cat"]=="All"][threshold_metric].astype('float64')[0]
