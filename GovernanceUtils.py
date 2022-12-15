@@ -102,7 +102,7 @@ class GovernanceUtils():
         X_train.columns = X_train_cols
 
         # These are the classifiers we will select from...
-        dtc = DecisionTreeClassifier(max_depth=5) #If we allow endless depth we overfit
+        #dtc = DecisionTreeClassifier(max_depth=5) #If we allow endless depth we overfit
         gnb = GaussianNB()
         lr = LogisticRegression(max_iter=2000,random_state=0)
         mlp = MLPClassifier(max_iter=2000,random_state=1, early_stopping=True) # MLP will tend to overfit unless we stop early   
@@ -115,8 +115,8 @@ class GovernanceUtils():
         svc = SVC(kernel="rbf", C=0.025, probability=True) # << artibitrary parameters, consider hyper parameter tuning.
         nsvc = NuSVC(probability=True)
 
-        all_mdls = [dtc, gnb, lr, mlp, rf, lda, qda, ada, gbc, knn, svc, nsvc]
-        all_mdls_desc = ['dtc', 'gnb', 'lr', 'mlp', 'rf', 'lda', 'qda', 'ada', 'gbc', 'knn', 'svc', 'nsvc']
+        all_mdls = [gnb, lr, mlp, rf, lda, qda, ada, gbc, knn, svc, nsvc]
+        all_mdls_desc = ['gnb', 'lr', 'mlp', 'rf', 'lda', 'qda', 'ada', 'gbc', 'knn', 'svc', 'nsvc']
         all_mdls_perf = []
         
         with warnings.catch_warnings():
