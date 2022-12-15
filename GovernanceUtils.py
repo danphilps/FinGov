@@ -43,7 +43,8 @@ class GovernanceUtils():
                               X_cross_validation: pd.DataFrame, 
                               y_train: pd.DataFrame, 
                               y_cross_validation: pd.DataFrame, 
-                              selection_criteria: str = 'precision') -> (object, list, list, list):
+                              selection_criteria: str = 'precision',
+                              balance_method == '') -> (object, list, list, list):
       
       '''
       Args:
@@ -52,6 +53,7 @@ class GovernanceUtils():
         y_train: training data target variable {1,0}, instances are rows.
         y_cross_validation: test data target variable {1,0}, instances are rows, used in model selection
         selection_criteria: str value, one of ['precision','recall','accuracy','f1']
+        balance_method: 'smote' or '' for nothing
 
       Returns:
         max_mdl: sklearn model object performing "best"
@@ -77,10 +79,16 @@ class GovernanceUtils():
       with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         #Balance training data....
-        # Generate SMOTE samples and use this to train
-        upsampler_smote = SMOTE()
-        X_upsampled_smote, y_upsampled_smote = upsampler_smote.fit_resample(X_train.values, y_train.values)
-
+        
+        if balance_method == 'smote':
+          # Generate SMOTE samples and use this to train
+          upsampler_smote = SMOTE()
+          X_upsampled_smote, y_upsampled_smote = upsampler_smote.fit_resample(X_train.values, y_train.values)
+        else:
+          # No up or down sampling
+          X_upsampled_smote = X_train.values
+          y_upsampled_smote = y_train.values
+         
         X_train_cols = X_train.columns #retain cols so we can meaninglfully use XAI
 
         sclr = StandardScaler()
