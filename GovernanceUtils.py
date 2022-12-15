@@ -177,6 +177,37 @@ class GovernanceUtils():
 
       return max_mdl, all_mdls, all_mdls_desc, all_mdls_perf
 
+  # Prepare data for predictions
+  def prep_X(X_train: pd.DataFrame
+              X_test: pd.DataFrame) -> pd.DataFrame:
+    '''
+    Args:
+      X_train: base normalization scheme on this data.
+      X_test: Normalize this data based on the normalization scheme
+        
+    Returns:
+        X_test: normalized
+        
+    Author:
+        Dan Philps
+    '''
+    
+    # Scale and transform the data for training
+    sclr = StandardScaler()
+    sclr.fit(X_train) # scale to 0 mean and std dev 1 on training data
+
+    X_train_cols = X_train.columns
+    X_train = sclr.fit_transform(X_train) # scale both sets:
+    X_test_normalized = sclr.fit_transform(X_test)
+
+    X_train = pd.DataFrame(X_train)
+    X_train.columns = X_train_cols
+
+    X_test_normalized = pd.DataFrame(X_test_normalized)
+    X_test_normalized.columns = X_train_cols
+
+    return X_test_normalized
+    
   # Check to run on Challenger and live models that encapsulates key KPIs
   def challenger_review_live(live_mod: object,
                             challenger_mod: object,
