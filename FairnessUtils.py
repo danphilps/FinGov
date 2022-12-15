@@ -426,7 +426,7 @@ class FairnessUtils():
       # Remove warning supression if we are using this functions in anger
       with warnings:
         warnings.simplefilter("ignore")
-      
+
         fig, ax = plt.subplots(nrows=1, ncols=N ,  figsize=(8,6))
         i = 0
         for ametric in bars_to_plot: 
