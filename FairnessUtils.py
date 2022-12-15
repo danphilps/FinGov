@@ -424,7 +424,7 @@ class FairnessUtils():
       width = 0.9  # the width of the bars
       
       # Remove warning supression if we are using this functions in anger
-      with warnings:
+      with warnings.catch_warnings():
         warnings.simplefilter("ignore")
 
         fig, ax = plt.subplots(nrows=1, ncols=N ,  figsize=(8,6))
