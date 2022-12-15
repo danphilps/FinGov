@@ -135,7 +135,8 @@ class FairnessUtils():
                         majority_class: str = 'male',
                         fairness_metric: str = 'precision',
                         threshold_metric: str = 'recall',
-                        threshold_min_max: list = [50,80],              
+                        threshold_min_max: list = [50,80],
+                        fairness_tolerance: float = 0.2,
                         show_charts: bool = True) -> float:   
     ''' 
     Args:
@@ -146,6 +147,8 @@ class FairnessUtils():
         majority_class: string - the value of the majority class against which the other population groups are compared with (e.g. ["Male"])
         fairness_metric: array with the fairness metrics to compare e.g. ["precision"]
         threshold_metric: Lender metric to optimize on...
+        threshold_min_max: list with the start and end points to use in the probability of default threshold cut off
+        fairness_tolerance: constraint... the minority groups need to have a fairness_metric and threshold_metric within this tolerance from the majority group
         show_charts: ...
     Returns:
         (A plot charting the fairness metric values to the various population groups...)
@@ -164,7 +167,11 @@ class FairnessUtils():
       raise TypeError('threshold_min_max[0] > threshold_min_max[1]')
     if threshold_min_max[1] <=1:
       raise TypeError('threshold_min_max[1] should be in the 0-100 range not 0-1')
-        
+    if fairness_tolerance < 0.5:
+      raise TypeError('fairness_tolerance < 0.5')
+    if fairness_tolerance > 1:
+      raise TypeError('fairness_tolerance > 1')
+            
     # Ini
     high_threshold = -999
     high_maximization_metric = -999
@@ -209,8 +216,9 @@ class FairnessUtils():
 
               if cat not in ["All", majority_class]:
                 #Ensure the metric for all non majority classes are within limits, one sided ensures that the non majority classes are not worse off
-                if (majority_class_metric * 0.8 > fairness_val):  
-                  if (majority_class_metric_threshold * 0.8 > threhold_val):  
+                # fairness_tolerance is typically set to 0.8 as a check but the starting point of a model may need to be nearer parity
+                if (majority_class_metric * fairness_tolerance > fairness_val):  
+                  if (majority_class_metric_threshold * fairness_tolerance > threhold_val):  
 
                     #if any metric is below limit, then set the model as not fair
                     fair_model = 'False'
