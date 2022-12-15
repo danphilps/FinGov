@@ -252,7 +252,6 @@ class FairnessUtils():
           return plt.cm.get_cmap(name, n)
         cmap = get_cmap(10)  
 
-        plt.title('Learning curve for Credit Approvals Model: (threshold_metric:' + threshold_metric + ', while monitoring fairness metric ' +  fairness_metric +  ')')
         plt.figure(figsize=(15,10))
         for j in range(df_cats_per_iteration.shape[1]): 
           Y_val = df_cats_per_iteration.iloc[:,j].values
@@ -269,6 +268,7 @@ class FairnessUtils():
         plt.xlabel('Loans refused at what probability of default (%)?')
         plt.ylabel('Measure of Threshold and Fairness')
         plt.legend()
+        plt.title('Recall Performance and Fairness Stats for a Range of Probability of Default Thresholds')
         plt.show()
 
       # Print the optimal threshold....
@@ -414,8 +414,7 @@ class FairnessUtils():
       cmap = get_cmap(10)
     
       width = 0.9  # the width of the bars
-      plt.title('Fairness: Maximising threshold Metric (' + threshold_metric + '), while monitoring fairness metric p (' +  threshold_metric +  ')')
-
+      
       fig, ax = plt.subplots(nrows=1, ncols=N ,  figsize=(8,6))
       i = 0
       for ametric in bars_to_plot: 
@@ -440,4 +439,5 @@ class FairnessUtils():
         ax[i].bar(X_val, Y_val, width, label=ametric, color=cmap(i))
 
         i += 1
+      plt.title('Fairness: Monitor ' + threshold_metric + ' and ' + fairness_metric + ' for fairness')
       plt.show()
