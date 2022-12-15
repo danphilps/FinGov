@@ -254,14 +254,14 @@ class GovernanceUtils():
       # Bar chart of prec and recall
       plt.bar(['live_prec', 'challenger_prec'], [live_prec, challenger_prec], color = 'b')
       plt.bar(['live_recall', 'challenger_recall'], [live_recall, challenger_recall], color = 'r')
-      plt.title=('Bar chart of Precision and Accuracy')
+      plt.title('Bar chart of Precision and Accuracy')
       plt.show()
 
       # ROC Curve
       y_hat_prob_live = live_mod.predict_proba(X_test)[:, 1]
       y_hat_prob_challenger = challenger_mod.predict_proba(X_test)[:, 1]
 
-      plt.title = "Credit Decisions ROC Curve"
+      plt.title("Credit Decisions ROC Curve")
 
       fpr, tpr, _ = metrics.roc_curve(y_test, y_hat_prob_live)
       plt.plot(fpr,tpr,label='Live model')
@@ -270,7 +270,7 @@ class GovernanceUtils():
       plt.plot(fpr,tpr,label='Challenger model')
 
       plt.legend(['Live', 'Challenger'])
-      plt.title = 'ROC Curves: Live vs Challenger'
+      plt.title('ROC Curves: Live vs Challenger')
       plt.show()
 
     return err
