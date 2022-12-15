@@ -176,7 +176,7 @@ class FairnessUtils():
     
       #Try with multiple threshold values from 0.5 to 1.0.
       df_stats_per_iteration = None
-      for a_threshold in range (25, 100, 1):
+      for a_threshold in range (30, 100, 1):
           fair_model = True
 
           #get the model metrics for a speicific threshold values
