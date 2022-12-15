@@ -258,13 +258,13 @@ class GovernanceUtils():
           print('Precision fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.')
 
       if (challenger_recall - live_recall > recall_fault_threshold):
-          err = 'Recall fault threshold breached! Challenger model achieving materially better precision than live - consider retraining live models.'
-          print('Recall fault threshold breached! Challenger model achieving materially better accuracy than live - consider retraining live models.')
+          err = 'Recall fault threshold breached! Challenger model achieving materially better recall than live - consider retraining live models.'
+          print('Recall fault threshold breached! Challenger model achieving materially better recall than live - consider retraining live models.')
 
       # Bar chart of prec and recall
       plt.bar(['live_prec', 'challenger_prec'], [live_prec, challenger_prec], color = 'b')
       plt.bar(['live_recall', 'challenger_recall'], [live_recall, challenger_recall], color = 'r')
-      plt.title('Bar chart of Precision and Accuracy')
+      plt.title('Bar chart of Precision and Recall')
       plt.show()
 
       # ROC Curve
@@ -507,7 +507,7 @@ class GovernanceUtils():
     return(psi_values)
 
 
-    # Kolmogorov-Smirnov (KS) is used to measure the performance of classification models. More accurately, KS is a measure of 
+  # Kolmogorov-Smirnov (KS) is used to measure the performance of classification models. More accurately, KS is a measure of 
   # the degree of separation between the positive and negative distributions, for example deafult vs. non-default. K-S ranges
   # from 0% to 100%, and the higher the KS value is, the better the model is at separating the positive and negative 
   # distributions. The KS statistic for two samples is simply the greatest distance between their two cummulative 
