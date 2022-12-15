@@ -124,23 +124,33 @@ class GovernanceUtils():
 
               # Output model selection information....Analytics calculated wrt default or y=1... Print score
               print(mdl)
-              print(f"Precision train: {precision_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
-              f"{precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
-
+              
               # Selection based on cross-validation set, ie out of sample data not used in training
               if selection_criteria == 'precision':
                 this_cv_perf = precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
+                #
+                print(f"Precision train: {precision_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+                f"{precision_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
               elif selection_criteria == 'recall':
                 this_cv_perf = recall_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
+                #
+                print(f"Precision train: {recall_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+                f"{recall_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
               elif selection_criteria == 'accuracy':
                 this_cv_perf = mdl.score(X_cross_validation,y_cross_validation)
+                #
+                print(f"Precision train: {mdl.score(y_upsampled_smote, y_train_hat)[1]:.4f}, cross-validation: ",
+                f"{mdl.score(y_cross_validation,y_cross_validation_hat)[1]:.4f}")
               elif selection_criteria == 'f1':
                 this_cv_perf = f1_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
-
+                #
+                print(f"Precision train: {f1_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+                f"{f1_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
+                
               if this_cv_perf > max_perf:
                   max_perf = this_cv_perf
                   max_mdl = mdl
-
+             
               #Save the F1 score of this model...
               all_mdls_perf.append(this_cv_perf)
 
