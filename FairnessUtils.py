@@ -439,5 +439,6 @@ class FairnessUtils():
         ax[i].bar(X_val, Y_val, width, label=ametric, color=cmap(i))
 
         i += 1
-      plt.title('Fairness: Monitor ' + threshold_metric + ' and ' + fairness_metric + ' for fairness')
+       
+      fig.suptitle('Fairness: Monitor ' + threshold_metric + ' and ' + fairness_metric + ' for fairness')
       plt.show()
