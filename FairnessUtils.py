@@ -177,7 +177,7 @@ class FairnessUtils():
     high_maximization_metric = -999
     
     # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-    # To supress warnings in notebooks - remove this if running in any other context
+    # To supress warnings in use-case notebooks - remove this if running in any other context
     with warnings.catch_warnings():
       warnings.simplefilter("ignore")
     
@@ -273,10 +273,10 @@ class FairnessUtils():
           plt.plot(df_stats_per_iteration.index, Y_val, label='Threshold: ' + df_stats_per_iteration.columns[j], color=cmap(j), linestyle='--')
 
         plt.axvline(opt_threshold*100,color='black', label='Optimum threshold')
-        plt.xlabel('Loans refused at what probability of default (%)?')
-        plt.ylabel('Measure of Threshold and Fairness')
+        plt.xlabel('Lending Threshold (Probability of default (%))')
+        plt.ylabel('Performance (')
         plt.legend()
-        plt.title('Recall Performance and Fairness Stats for a Range of Probability of Default Thresholds')
+        plt.title('Performance of Lending Thresholds: We Plot ' + fairness_metric + ' and ' + threshold_metric + ' for a Range of Probability of Default Thresholds')
         plt.show()
 
       # Print the optimal threshold....
@@ -423,10 +423,14 @@ class FairnessUtils():
     
       width = 0.9  # the width of the bars
       
-      # Remove warning supression if we are using this functions in anger
+      # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+      # To supress warnings in use-case notebooks - remove this if running in any other context
       with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-
+        
+        # Sort so as we always get the same metric in the right hand subplot#
+        bars_to_plot = bars_to_plot.sort()
+        
         fig, ax = plt.subplots(nrows=1, ncols=N ,  figsize=(8,6))
         i = 0
         for ametric in bars_to_plot: 
