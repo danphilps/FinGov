@@ -412,7 +412,6 @@ class FairnessUtils():
       bars_to_plot = [fairness_metric,threshold_metric]
       N = len(bars_to_plot)
       X_val = df_stats["cat"].values.tolist()
-
       
       # map colors...
       def get_cmap(n, name='hsv'):
@@ -427,9 +426,6 @@ class FairnessUtils():
       # To supress warnings in use-case notebooks - remove this if running in any other context
       with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        
-        # Sort so as we always get the same metric in the right hand subplot#
-        bars_to_plot = bars_to_plot.sort()
         
         fig, ax = plt.subplots(nrows=1, ncols=N ,  figsize=(8,6))
         i = 0
