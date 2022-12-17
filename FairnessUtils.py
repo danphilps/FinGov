@@ -274,9 +274,9 @@ class FairnessUtils():
 
         plt.axvline(opt_threshold*100,color='black', label='Optimum threshold')
         plt.xlabel('Lending Threshold (Probability of default (%))')
-        plt.ylabel('Performance (')
+        plt.ylabel('Performance (' + fairness_metric + ' and ' + threshold_metric + ')' )
         plt.legend()
-        plt.title('Performance of Lending Thresholds: We Plot ' + fairness_metric + ' and ' + threshold_metric + ' for a Range of Probability of Default Thresholds')
+        plt.title('Performance of Lending Thresholds: We plot ' + fairness_metric + ' and ' + threshold_metric + ' for a range of probability of default thresholds')
         plt.show()
 
       # Print the optimal threshold....
