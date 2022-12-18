@@ -214,7 +214,7 @@ class FairnessUtils():
               
               #ignore the category values of All and the majority class. obtain the fairness metric for the other population groups
               fairness_val = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
-              threhold_val = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
+              threhold_val = df_stats.loc[df_stats["cat"]==cat][threshold_metric].astype('float64')[0]
               
               if cat not in ["All", majority_class]:                
                 # Ensure the metric for all non majority classes are within limits, one sided ensures that the non majority classes are not worse off
