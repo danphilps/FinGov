@@ -223,7 +223,7 @@ class FairnessUtils():
                   if (majority_class_metric_threshold * (1-fairness_tolerance) < threhold_val) & (majority_class_metric_threshold * (1+fairness_tolerance) > threhold_val):  
 
                     #if any metric is below limit, then set the model as not fair
-                    fair_model = 'False'
+                    fair_model = False
                     #and try the next threshold
 
               # record results...
