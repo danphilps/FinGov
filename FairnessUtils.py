@@ -175,6 +175,7 @@ class FairnessUtils():
     # Ini
     high_threshold = -999
     high_maximization_metric = -999
+    fairness_tolerance = abs(fairness_tolerance)
     
     # @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     # To supress warnings in use-case notebooks - remove this if running in any other context
