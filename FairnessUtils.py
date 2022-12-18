@@ -185,8 +185,7 @@ class FairnessUtils():
       #Try with multiple threshold values from 0.5 to 1.0.
       df_stats_per_iteration = None
       for a_threshold in range (30, 100, 1):
-          fair_model = True
-
+          
           #get the model metrics for a speicific threshold values
           df_stats = FairnessUtils.fairness_stats_get (mod, X_test, y_test, X_test_category_col, a_threshold/100)
 
@@ -216,14 +215,15 @@ class FairnessUtils():
               fairness_val = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
               threhold_val = df_stats.loc[df_stats["cat"]==cat][threshold_metric].astype('float64')[0]
               
+              fair_model = False
               if cat not in ["All", majority_class]:                
                 # Ensure the metric for all non majority classes are within limits, one sided ensures that the non majority classes are not worse off
                 # two sided is a conservative measure. These limits, are typically set to +/- 20%, but as a starting point of the model may need to be nearer parity
                 if (majority_class_metric * (1-fairness_tolerance) < fairness_val) & (majority_class_metric * (1+fairness_tolerance) > fairness_val):  
                   if (majority_class_metric_threshold * (1-fairness_tolerance) < threhold_val) & (majority_class_metric_threshold * (1+fairness_tolerance) > threhold_val):  
-
+                    
                     #if any metric is below limit, then set the model as not fair
-                    fair_model = False
+                    fair_model = True
                     #and try the next threshold
 
               # record results...
