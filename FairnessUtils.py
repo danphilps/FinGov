@@ -289,7 +289,10 @@ class FairnessUtils():
         plt.show()
 
       # Print the optimal threshold....
-      print('Optimal threshold: ' + str(opt_threshold))
+      if opt_threshold == np.nan:
+        print('Optimal solution withing fairness bounds has note been found. Widen fairness bands or train and try another model.')
+      else:
+        print('Optimal threshold: ' + str(opt_threshold))
 
     return opt_threshold
 
