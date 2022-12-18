@@ -212,11 +212,11 @@ class FairnessUtils():
           cats_per_iteration = None
           for cat in df_stats['cat'].values:
               
-              if cat not in ["All", majority_class]:
-                #ignore the category values of All and the majority class. obtain the fairness metric for the other population groups
-                fairness_val = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
-                threhold_val = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
-
+              #ignore the category values of All and the majority class. obtain the fairness metric for the other population groups
+              fairness_val = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
+              threhold_val = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
+              
+              if cat not in ["All", majority_class]:                
                 # Ensure the metric for all non majority classes are within limits, one sided ensures that the non majority classes are not worse off
                 # two sided is a conservative measure. These limits, are typically set to +/- 20%, but as a starting point of the model may need to be nearer parity
                 if (majority_class_metric * (1-fairness_tolerance) < fairness_val) & (majority_class_metric * (1+fairness_tolerance) > fairness_val):  
@@ -226,10 +226,10 @@ class FairnessUtils():
                     fair_model = 'False'
                     #and try the next threshold
 
-                # record results...
-                if cats_per_iteration is None:
-                  cats_per_iteration = list()
-                cats_per_iteration.append(fairness_val)
+              # record results...
+              if cats_per_iteration is None:
+                cats_per_iteration = list()
+              cats_per_iteration.append(fairness_val)
 
           # metric to maximize!
           current_maximization_metric = df_stats.loc[df_stats["cat"]=="All"][threshold_metric].astype('float64')[0]
