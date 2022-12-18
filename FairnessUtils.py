@@ -209,7 +209,7 @@ class FairnessUtils():
 
           #Iterate through the various values for the selected group
           cats_per_iteration = None
-          fair_model = False
+          fair_model = True
           for cat in df_stats['cat'].values:
               
               #ignore the category values of All and the majority class. obtain the fairness metric for the other population groups
@@ -221,10 +221,11 @@ class FairnessUtils():
                 # two sided is a conservative measure. These limits, are typically set to +/- 20%, but as a starting point of the model may need to be nearer parity
                 if (majority_class_metric * (1-fairness_tolerance) < fairness_val) & (majority_class_metric * (1+fairness_tolerance) > fairness_val):  
                   #if (majority_class_metric_threshold * (1-fairness_tolerance) < threhold_val) & (majority_class_metric_threshold * (1+fairness_tolerance) > threhold_val):  
-                    
                   #if any metric is below limit, then set the model as not fair
-                  fair_model = True
+                  pass
                   #and try the next threshold
+                else:
+                 fair_model = True
 
               # record results...
               if cats_per_iteration is None:
