@@ -220,11 +220,11 @@ class FairnessUtils():
                 # Ensure the metric for all non majority classes are within limits, one sided ensures that the non majority classes are not worse off
                 # two sided is a conservative measure. These limits, are typically set to +/- 20%, but as a starting point of the model may need to be nearer parity
                 if (majority_class_metric * (1-fairness_tolerance) < fairness_val) & (majority_class_metric * (1+fairness_tolerance) > fairness_val):  
-                  if (majority_class_metric_threshold * (1-fairness_tolerance) < threhold_val) & (majority_class_metric_threshold * (1+fairness_tolerance) > threhold_val):  
+                  #if (majority_class_metric_threshold * (1-fairness_tolerance) < threhold_val) & (majority_class_metric_threshold * (1+fairness_tolerance) > threhold_val):  
                     
-                    #if any metric is below limit, then set the model as not fair
-                    fair_model = True
-                    #and try the next threshold
+                  #if any metric is below limit, then set the model as not fair
+                  fair_model = True
+                  #and try the next threshold
 
               # record results...
               if cats_per_iteration is None:
