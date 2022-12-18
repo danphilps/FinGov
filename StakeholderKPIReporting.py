@@ -74,8 +74,8 @@ class StakeholderKPIReporting():
       raise TypeError('Bad parameter: X.shape[0] != y.shape[0]')
     if y.shape[0] != y_hat.shape[0]:
       raise TypeError('Bad parameter: y_test.shape[0] != y_hat.shape[0]')
-    if (y.dtypes != y_hat.dtypes):
-      raise TypeError('Bad parameter: y_test.dtypes != y_hat.dtypes')
+    #if (y.dtypes != y_hat.dtypes):
+    #  raise TypeError('Bad parameter: y_test.dtypes != y_hat.dtypes')
 
     with warnings.catch_warnings():
       warnings.simplefilter("ignore")
