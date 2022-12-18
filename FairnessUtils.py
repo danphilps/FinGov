@@ -209,13 +209,13 @@ class FairnessUtils():
 
           #Iterate through the various values for the selected group
           cats_per_iteration = None
+          fair_model = False
           for cat in df_stats['cat'].values:
               
               #ignore the category values of All and the majority class. obtain the fairness metric for the other population groups
               fairness_val = df_stats.loc[df_stats["cat"]==cat][fairness_metric].astype('float64')[0]
               threhold_val = df_stats.loc[df_stats["cat"]==cat][threshold_metric].astype('float64')[0]
               
-              fair_model = False
               if cat not in ["All", majority_class]:                
                 # Ensure the metric for all non majority classes are within limits, one sided ensures that the non majority classes are not worse off
                 # two sided is a conservative measure. These limits, are typically set to +/- 20%, but as a starting point of the model may need to be nearer parity
