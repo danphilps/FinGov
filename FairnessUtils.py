@@ -128,7 +128,7 @@ class FairnessUtils():
 
   # Find the best threshold for 
   @staticmethod
-  def decision_threshold_find_optimal(mod: object, 
+  def decision_threshold_find_optimum(mod: object, 
                         X_test: pd.DataFrame, 
                         y_test: pd.DataFrame, 
                         X_test_category_col: pd.DataFrame,
@@ -152,7 +152,7 @@ class FairnessUtils():
         show_charts: ...
     Returns:
         (A plot charting the fairness metric values to the various population groups...)
-        optimal_threshold: a float with value showing the "best" cut off for threshold_metric, while satifying fairness_metric based on the category X_test_category_col and the majority_class
+        optimum_threshold: a float with value showing the "best" cut off for threshold_metric, while satifying fairness_metric based on the category X_test_category_col and the majority_class
     
     Author:
       Madhu Nagarajan, Dan Philps
@@ -288,11 +288,11 @@ class FairnessUtils():
         plt.title('Performance of Lending Thresholds: We plot ' + fairness_metric + ' and ' + threshold_metric + ' for a range of probability of default thresholds')
         plt.show()
 
-      # Print the optimal threshold....
+      # Print the optimum threshold....
       if opt_threshold == np.nan:
-        print('Optimal solution withing fairness bounds has note been found. Widen fairness bands or train and try another model.')
+        print('Optimum solution withing fairness bounds has note been found. Widen fairness bands or train and try another model.')
       else:
-        print('Optimal threshold: ' + str(opt_threshold))
+        print('Optim threshold: ' + str(opt_threshold))
 
     return opt_threshold
 
