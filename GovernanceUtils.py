@@ -142,17 +142,17 @@ class GovernanceUtils():
               elif selection_criteria == 'recall':
                 this_cv_perf = recall_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
                 #
-                print(f"Precision train: {recall_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+                print(f"Recall train: {recall_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
                 f"{recall_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
               elif selection_criteria == 'accuracy':
                 this_cv_perf = mdl.score(X_cross_validation,y_cross_validation)
                 #
-                print(f"Precision train: {mdl.score(y_upsampled_smote, y_train_hat)[1]:.4f}, cross-validation: ",
+                print(f"Accuracy train: {mdl.score(y_upsampled_smote, y_train_hat)[1]:.4f}, cross-validation: ",
                 f"{mdl.score(y_cross_validation,y_cross_validation_hat)[1]:.4f}")
               elif selection_criteria == 'f1':
                 this_cv_perf = f1_score(y_cross_validation,y_cross_validation_hat, average=None)[1]
                 #
-                print(f"Precision train: {f1_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
+                print(f"F1 Score train: {f1_score(y_upsampled_smote, y_train_hat, average=None)[1]:.4f}, cross-validation: ",
                 f"{f1_score(y_cross_validation,y_cross_validation_hat, average=None)[1]:.4f}")
                 
               if this_cv_perf > max_perf:
