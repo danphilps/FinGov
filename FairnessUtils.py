@@ -50,7 +50,13 @@ class FairnessUtils():
       raise TypeError('X_test.shape[0] != X_test_category_col.shape[0]:')
     if (y_approval_threshold < 0) | (y_approval_threshold > 1):
       raise TypeError('(approval_threshold < 0) | (approval_threshold > 1)')
-
+    
+    # Types
+    if not(isinstance(X_test, pd.DataFrame)): raise TypeError('Type error: X_test is' +  type(X_test))
+    if not(isinstance(y_test, pd.DataFrame)): raise TypeError('Type error: y_test is' +  type(y_test))
+    if not(isinstance(X_test_category_col, pd.DataFrame)): raise TypeError('Type error: X_test_category_col is' +  type(X_test_category_col))      
+      
+      
     # Ini
     df_stats = pd.DataFrame()
     stats_cols = []
@@ -171,7 +177,12 @@ class FairnessUtils():
       raise TypeError('fairness_tolerance < 0')
     if fairness_tolerance > 1:
       raise TypeError('fairness_tolerance > 1')
-            
+    
+    # Types
+    if not(isinstance(X_test, pd.DataFrame)): raise TypeError('Type error: X_test is' +  type(X_test))
+    if not(isinstance(y_test, pd.DataFrame)): raise TypeError('Type error: y_test is' +  type(y_test))
+    if not(isinstance(X_test_category_col, pd.DataFrame)): raise TypeError('Type error: X_test_category_col is' +  type(X_test_category_col))
+    
     # Ini
     high_threshold = -999
     high_maximization_metric = -999
@@ -420,7 +431,10 @@ class FairnessUtils():
         raise TypeError('threshold_metric is not in df_stats.iloc[:,0]')
       if majority_class.isnumeric():
         raise TypeError('non numeric descriptors of classes only')
-
+        
+      # Types
+      if not(isinstance(df_stats, pd.DataFrame)): raise TypeError('Type error: df_stats is' +  type(df_stats))
+              
       bars_to_plot = [fairness_metric,threshold_metric]
       N = len(bars_to_plot)
       X_val = df_stats["cat"].values.tolist()
