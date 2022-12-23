@@ -76,6 +76,11 @@ class GovernanceUtils():
       if selection_criteria not in ['precision','recall','accuracy','f1']:
         raise TypeError("selection_criteria not in ['precision','recall','accuracy','f1']")
 
+      # Types
+      if not(isinstance(X_train, pd.DataFrame)): raise TypeError('Type error: X_train is' +  type(X_train))
+      if not(isinstance(X_cross_validation, pd.DataFrame)): raise TypeError('Type error: X_cross_validation is' +  type(X_cross_validation))
+      if not(isinstance(y_cross_validation, pd.DataFrame)): raise TypeError('Type error: y_cross_validation is' +  type(y_cross_validation))
+            
       with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         #Balance training data....
@@ -210,6 +215,10 @@ class GovernanceUtils():
         Dan Philps
     '''
     
+    # Types
+    if not(isinstance(X_train, pd.DataFrame)): raise TypeError('Type error: X_train is' +  type(X_train))
+    if not(isinstance(X_test, pd.DataFrame)): raise TypeError('Type error: X_test is' +  type(X_test))
+    
     # Scale and transform the data for training
     sclr = StandardScaler()
     sclr.fit(X_train) # scale to 0 mean and std dev 1 on training data
@@ -247,7 +256,12 @@ class GovernanceUtils():
         
     Author:
         Dan Philps
-    '''
+    '''    
+    
+    # Types
+    if not(isinstance(X_test, pd.DataFrame)): raise TypeError('Type error: X_test is' +  type(X_test))
+    if not(isinstance(y_test, pd.DataFrame)): raise TypeError('Type error: y_test is' +  type(y_test))
+    
     with warnings.catch_warnings():
       warnings.simplefilter("ignore")
       
@@ -328,7 +342,12 @@ class GovernanceUtils():
     if X_test.shape[1] != X_train.shape[1]:
       raise TypeError('Bad parameter: X_train.shape[0] != y_train.shape[0]')
   
-   # Supress warnings
+    # Types
+    if not(isinstance(X_train, pd.DataFrame)): raise TypeError('Type error: X_train is' +  type(X_train))
+    if not(isinstance(y_train, pd.DataFrame)): raise TypeError('Type error: y_train is' +  type(y_train))
+    if not(isinstance(X_test, pd.DataFrame)): raise TypeError('Type error: X_test is' +  type(X_test))
+      
+    # Supress warnings
     with warnings.catch_warnings():
       warnings.simplefilter("ignore")
    
@@ -424,6 +443,10 @@ class GovernanceUtils():
         if X_train.shape[1] != X.shape[1]:
           raise TypeError('X_train.shape != X.shape')
 
+    # Types
+    if not(isinstance(X_train, pd.DataFrame)): raise TypeError('Type error: X_train is' +  type(X_train))
+    if not(isinstance(X, pd.DataFrame)): raise TypeError('Type error: X is' +  type(X))
+          
     # Ini data   
     ar_X_train = X_train.to_numpy()
     ar_X = X.to_numpy()
@@ -541,6 +564,10 @@ class GovernanceUtils():
       Author:
         Augustine Backer
       '''
+      
+      # Types
+      if not(isinstance(model_score_target, pd.DataFrame)): raise TypeError('Type error: model_score_target is' +  type(model_score_target))
+      
       ks=ks_2samp(model_score_target.loc[model_score_target[target]==0,score], 
                   model_score_target.loc[model_score_target[target]==1,score])
       
@@ -569,6 +596,7 @@ class GovernanceUtils():
       Returns:
         ks_relative_percent_change: the KS value for the cummulative distribution function of the scores of events and non-events
       '''
+        
       ks_baseline=ks_2samp(model_score_target_baseline.loc[model_score_target_baseline[target]==0,score], 
                   model_score_target_baseline.loc[model_score_target_baseline[target]==1,score])
       ks_current=ks_2samp(model_score_target_current.loc[model_score_target_current[target]==0,score], 
