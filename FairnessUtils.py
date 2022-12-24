@@ -179,7 +179,6 @@ class FairnessUtils():
     # Types
     if not(isinstance(X_test, pd.DataFrame)): raise TypeError('Type error: X_test is' +  type(X_test))
     if not(isinstance(y_test, pd.DataFrame)): raise TypeError('Type error: y_test is' +  type(y_test))
-    if not(isinstance(X_test_category_col, pd.DataFrame)): raise TypeError('Type error: X_test_category_col is' +  type(X_test_category_col))
     
     # Ini
     high_threshold = -999
