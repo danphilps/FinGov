@@ -402,9 +402,9 @@ class GovernanceUtils():
     
     return imbalanced
 
-  # Population Stability Index (PSI) can be applied to the input features or variables, also known as Characteristic 
-  # Stability Index (CSI), as well as the output of a scoring model, a model whose score may indicate the probability 
-  # of fraud, or probability of default. PSI captures the shift in the population distribution of values. If the score
+  # Population Stability Index (PSI) aims to capture the overall population shift whereas Characteristic Stability Index (CSI)
+  # aims to capture shifts in the individual model variables used.
+  # PSI captures the shift in the population distribution of values. If the score
   # distribution has shifted, one should then look to see what feature(s) or variable(s) is causing the shift.
   # A shift in the distribution of input features or features, or output score distribution could imply that the model 
   # may need retrained. The common interpretation of PSI, which comes from the orignal work on credit models, is as follows: 
