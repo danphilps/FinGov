@@ -300,7 +300,7 @@ class FairnessUtils():
       if opt_threshold == np.nan:
         print('Optimum solution withing fairness bounds has note been found. Widen fairness bands or train and try another model.')
       else:
-        print('Optim threshold: ' + str(opt_threshold))
+        print('Optimum threshold: ' + str(opt_threshold))
 
     return opt_threshold
 
